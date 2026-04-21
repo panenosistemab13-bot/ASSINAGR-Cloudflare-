@@ -11,6 +11,9 @@ interface State {
 }
 
 export class ErrorBoundary extends React.Component<Props, State> {
+  state: State;
+  props: Props;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -28,7 +31,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.state.hasError) {
+    const { hasError, error } = this.state;
+    const { children } = this.props;
+
+    if (hasError) {
       return (
         <div className="min-h-screen bg-[#0c0a09] flex flex-col items-center justify-center p-6 text-center">
           <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
@@ -38,9 +44,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
           <p className="text-slate-400 max-w-md mb-8">
             Ocorreu um erro inesperado ao carregar o aplicativo. Isso pode ser causado por configurações ausentes ou problemas de conexão.
           </p>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-8 w-full max-w-md text-left">
-            <p className="text-xs font-mono text-red-400 break-all">
-              {this.state.error?.message || 'Erro desconhecido'}
+          <div className="glass-dark rounded-xl p-4 mb-8 w-full max-w-md text-left">
+            <p className="text-xs font-mono text-red-400 break-all text-center">
+              {error?.message || 'Erro desconhecido'}
             </p>
           </div>
           <button
@@ -54,6 +60,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    return children;
   }
 }

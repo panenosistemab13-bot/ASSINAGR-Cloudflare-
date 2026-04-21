@@ -52,6 +52,10 @@ export const api = {
         return snapshot.data();
       }
       return null;
+    },
+    updateTerms: async (data: any): Promise<void> => {
+      const dbRef = doc(db, 'settings', 'termos');
+      await setDoc(dbRef, data, { merge: true });
     }
   }
 };

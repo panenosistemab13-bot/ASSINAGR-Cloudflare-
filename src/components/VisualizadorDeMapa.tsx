@@ -59,6 +59,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
 
   useEffect(() => {
     const fetchCoords = async () => {
+      // Se não houver destino, não faz nada
       if (!destination) {
         setLoading(false);
         return;
@@ -68,26 +69,42 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         setLoading(true);
         setError(false);
         
-        // 1. Verifica no banco se já temos coordenadas
+        // 1. Prioridade Máxima: Coordenadas Reais do Banco de Dados (Firestore)
         if (terms?.latitude && terms?.longitude) {
-          setCoords([parseFloat(terms.latitude), parseFloat(terms.longitude)]);
-          setLoading(false);
-          return;
+          const lat = parseFloat(terms.latitude);
+          const lon = parseFloat(terms.longitude);
+          
+          if (!isNaN(lat) && !isNaN(lon)) {
+            console.log("Usando coordenadas do banco:", lat, lon);
+            setCoords([lat, lon]);
+            setLoading(false);
+            return;
+          }
         }
 
-        // 2. Fallback: Geocodificação gratuita via Nominatim (OpenStreetMap)
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}&limit=1`);
-        const data = await response.json();
+        // 2. Segunda Opção: Geocodificação via Nominatim baseada no Destino
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}&limit=1`);
+          const data = await response.json();
 
-        if (data && data.length > 0) {
-          setCoords([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
-        } else {
-          // Se falhar, tenta um fallback genérico (ex: Santa Luzia/MG) ou mostra erro
-          console.warn("Localização não encontrada no Nominatim");
-          setError(true);
+          if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+            setCoords([lat, lon]);
+            setLoading(false);
+            return;
+          }
+        } catch (osmErr) {
+          console.warn("Falha ao consultar Nominatim:", osmErr);
         }
+
+        // 3. Fallback Final: Coordenada Regional Padrão (Santa Luzia/MG - Matriz)
+        // Isso evita que o mapa carregue "no mar" ou em lugar aleatório
+        console.warn("Usando fallback regional padrão");
+        setCoords([-19.7697, -43.8523]); 
+        
       } catch (err) {
-        console.error("Erro ao buscar coordenadas:", err);
+        console.error("Erro total ao buscar coordenadas:", err);
         setError(true);
       } finally {
         setLoading(false);
