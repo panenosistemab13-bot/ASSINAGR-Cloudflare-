@@ -79,7 +79,25 @@ export const DriverSignature: React.FC = () => {
       if (!id) return;
       
       try {
-        const parsedData = await api.contracts.get(id);
+        const urlParams = new URLSearchParams(window.location.search);
+        const fallbackData = urlParams.get('data');
+        let parsedData = await api.contracts.get(id);
+
+        if (!parsedData && fallbackData) {
+          try {
+            const decoded = JSON.parse(decodeURIComponent(fallbackData));
+            parsedData = {
+              id: id,
+              data: decoded,
+              signature: null,
+              signed_at: null,
+              created_at: new Date().toISOString(),
+              onbase_status: false
+            } as Contract;
+          } catch (e) {
+            console.error("Falha ao decodificar a carga fallback", e);
+          }
+        }
 
         if (parsedData) {
           setContract(parsedData); 

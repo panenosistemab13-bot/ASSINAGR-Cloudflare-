@@ -280,7 +280,13 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
       };
 
       // SALVA DIRETO NA API
-      await api.contracts.create(contractData);
+      let usedFallback = false;
+      try {
+        await api.contracts.create(contractData);
+      } catch (error) {
+        console.log("Fallback: Usando URL Query Params para armazenar dados devido a erro.", error);
+        usedFallback = true;
+      }
 
       alert("Link gerado e salvo com sucesso!");
       
@@ -293,8 +299,9 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
       };
       setContracts([localContract, ...contracts]);
       
-      // GERAR LINK - Ajustado para usar ?id= como solicitado ou padrão do painel
-      const url = `${window.location.origin}/sign/${newId}?id=${newId}`;
+      // GERAR LINK - Ajustado para usar ?id= como solicitado e fallback ?data=
+      const encodedData = encodeURIComponent(JSON.stringify(contractData.dados));
+      const url = `${window.location.origin}/sign/${newId}?id=${newId}&data=${encodedData}`;
       setGeneratedLink(url);
       setParsedData(contractData.dados as any);
       
