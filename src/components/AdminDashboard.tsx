@@ -1019,7 +1019,22 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     // Draw image first with a slight "zoom" to eliminate white margins
     let mapLoaded = false;
     try {
-      if (contract.data.mapa_arquivo) {
+      const isNatal = destino.toUpperCase().includes('NATAL');
+      
+      if (isNatal) {
+        const natalUrl = "https://i.postimg.cc/KcCxBb3N/NATAL.png";
+        const response = await fetch(natalUrl);
+        if (response.ok) {
+          const blob = await response.blob();
+          const base64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          });
+          doc.addImage(base64, 'PNG', 10, y, mapWidth, sectionHeight);
+          mapLoaded = true;
+        }
+      } else if (contract.data.mapa_arquivo) {
         const publicUrl = `/mapas-rotas/${contract.data.mapa_arquivo}`;
         const response = await fetch(publicUrl);
         if (response.ok) {

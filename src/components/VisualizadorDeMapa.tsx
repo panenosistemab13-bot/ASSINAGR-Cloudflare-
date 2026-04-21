@@ -140,6 +140,8 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
     );
   };
 
+  const isNatal = destination?.toUpperCase().includes('NATAL');
+
   return (
     <div className="w-full bg-white border-2 border-slate-800 rounded-none overflow-hidden shadow-none font-sans relative">
       <style>{`
@@ -187,7 +189,17 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         {/* Área do Mapa (Esquerda) */}
         <div className="w-full h-full bg-slate-50 relative overflow-hidden flex flex-col md:flex-row">
           <div className="flex-1 relative min-h-[300px] md:min-h-0 border-b-2 md:border-b-0 md:border-r-2 border-slate-800">
-            {loading ? (
+            {isNatal ? (
+              <div className="relative w-full h-full">
+                <img 
+                  src="https://i.postimg.cc/KcCxBb3N/NATAL.png" 
+                  alt="Mapa Natal" 
+                  className="w-full h-full object-cover" 
+                  referrerPolicy="no-referrer"
+                />
+                <WatermarkOverlay />
+              </div>
+            ) : loading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-[1001] bg-white/80">
                 <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Carregando Mapa...</p>
