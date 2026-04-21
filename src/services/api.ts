@@ -23,7 +23,7 @@ export const api = {
       return res.json();
     },
     sign: async (id: string, signature: string): Promise<void> => {
-      const res = await fetch(`${BASE_URL}/api/contracts/${id}/sign`, {
+      const res = await fetch(`${BASE_URL}/api/contracts/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ signature })

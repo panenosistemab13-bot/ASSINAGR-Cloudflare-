@@ -83,9 +83,15 @@ export default {
         });
       }
 
-      // POST /api/contracts/:id/sign - Assinar contrato
-      if (request.method === 'POST' && path.match(/^\/api\/contracts\/[^\/]+\/sign$/)) {
-        const id = path.split('/')[3];
+      // POST /api/contracts/:id - Assinar contrato
+      if (request.method === 'POST' && path.match(/^\/api\/contracts\/[^\/]+(\/sign)?$/)) {
+        let id;
+        if (path.endsWith('/sign')) {
+          id = path.split('/')[3];
+        } else {
+          id = path.split('/').pop();
+        }
+
         const body = await request.json();
         
         if (!body.signature) {
