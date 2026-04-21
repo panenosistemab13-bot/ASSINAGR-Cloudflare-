@@ -157,7 +157,16 @@ export default {
         });
       }
 
-      // Rota não encontrada
+      // Se não for uma rota da API, tenta servir os arquivos estáticos do frontend (Pages)
+      if (!path.startsWith('/api')) {
+        if (env.ASSETS) {
+          return env.ASSETS.fetch(request);
+        } else {
+          return new Response("Frontend route requested, but ASSETS binding is missing.", { status: 404 });
+        }
+      }
+
+      // Rota da API não encontrada
       return new Response(JSON.stringify({ error: 'Not found route' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 404
