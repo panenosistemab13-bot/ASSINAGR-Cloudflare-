@@ -22,7 +22,6 @@ import { api } from '../services/api';
 import VisualizadorDeMapa from './VisualizadorDeMapa';
 import { LOGO_3_CORACOES } from '../constants';
 import { getCitiesForDestination, getForbiddenStopsForDestination } from '../utils/itineraryUtils';
-import jsPDF from 'jspdf';
 
 const CHECKLIST_ITEMS = [
   "O VEÍCULO APRESENTA-SE LIMPO E EM BOAS CONDIÇÕES DE ACESSO AO DEPÓSITO.",
@@ -176,28 +175,11 @@ export const DriverSignature: React.FC = () => {
     }
   };
 
-  const handleDownloadSigned = async () => {
-    if (!contract) return;
-    setLoading(true);
-    alert("Gerando comprovante... Por favor, aguarde.");
-    setTimeout(() => {
-       setLoading(false);
-    }, 1500);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
-        <div className="relative">
-          <Loader2 className="w-12 h-12 animate-spin text-red-600" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-2 h-2 bg-red-600 rounded-full animate-ping"></div>
-          </div>
-        </div>
-        <div className="text-center space-y-1">
-          <p className="text-slate-900 font-bold">Aguarde um momento</p>
-          <p className="text-slate-400 text-xs font-medium animate-pulse">Sincronizando com a Central GR...</p>
-        </div>
+        <Loader2 className="w-10 h-10 animate-spin text-red-500" />
+        <p className="text-slate-400 font-medium animate-pulse">Carregando documentos...</p>
       </div>
     );
   }
@@ -224,74 +206,31 @@ export const DriverSignature: React.FC = () => {
 
   if (signed) {
     return (
-      <div className="min-h-screen bg-[#0c0a09] flex flex-col items-center justify-center p-6 text-center overflow-hidden relative">
-        {/* Background Accents */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-          <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-red-900/30 blur-[120px] rounded-full"></div>
-          <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-red-900/20 blur-[120px] rounded-full"></div>
-        </div>
-
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
         <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl max-w-md w-full text-center space-y-8 border border-white/10 relative z-10"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 max-w-md w-full text-center space-y-8 border border-slate-100"
         >
-          <div className="relative inline-block">
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', damping: 12 }}
-              className="w-24 h-24 bg-emerald-500 rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20"
-            >
-              <CheckCircle className="w-12 h-12 text-white" />
-            </motion.div>
-            <motion.div
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 bg-emerald-500 rounded-3xl -z-10"
-            ></motion.div>
+          <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto border border-emerald-100">
+            <CheckCircle className="w-10 h-10 text-emerald-600" />
           </div>
-
-          <div className="space-y-3">
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Assinado com Sucesso!</h1>
-            <p className="text-slate-500 text-sm leading-relaxed">
-              Olá <span className="font-bold text-red-600">{contract.data.motorista}</span>, sua assinatura foi validada e vinculada ao Gerenciamento de Risco da <span className="font-bold text-slate-800">3corações</span>.
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-slate-900">Registro Concluído</h1>
+            <p className="text-slate-500 text-sm">
+              Obrigado, <span className="font-bold text-slate-700">{contract.data.motorista}</span>. Seu termo foi assinado e arquivado com sucesso.
             </p>
           </div>
           
-          <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
-             <div className="flex items-center gap-3 text-left">
-                <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center shrink-0">
-                   <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Status do Documento</p>
-                   <p className="text-sm font-bold text-slate-700">Validado & Arquivado</p>
-                </div>
-             </div>
-             <div className="h-px bg-slate-200 w-full" />
-             <p className="text-[10px] text-slate-400 font-medium leading-relaxed italic">
-               O comprovante digital foi enviado automaticamente para a Central de Monitoramento e já está disponível para consulta.
-             </p>
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
+            <ShieldCheck className="w-6 h-6 text-slate-400" />
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-left">
+              Documento arquivado digitalmente sob criptografia de ponta a ponta.
+            </p>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20"
-            >
-               Visualizar Termo
-            </button>
-            <button
-              onClick={() => window.location.href = '/'}
-              className="w-full py-4 bg-white text-slate-600 border border-slate-200 rounded-2xl font-bold hover:bg-slate-50 transition-all"
-            >
-               Sair do Sistema
-            </button>
-          </div>
-
-          <div className="pt-4 border-t border-slate-100">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.4em]">ASSINAGR • {new Date().getFullYear()}</p>
+          <div className="pt-4">
+            <p className="text-[10px] text-slate-300 font-mono uppercase tracking-[0.3em]">ASSINAGR • {new Date().getFullYear()}</p>
           </div>
         </motion.div>
       </div>

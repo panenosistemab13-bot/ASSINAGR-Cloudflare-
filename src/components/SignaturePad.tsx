@@ -130,7 +130,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({ onSave, onClear, sav
           className={`flex-1 py-4 px-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
             saving || !hasSignature 
               ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
-              : 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20'
+              : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-600/20'
           }`}
         >
           {saving ? (
