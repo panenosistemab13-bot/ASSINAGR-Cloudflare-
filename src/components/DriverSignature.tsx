@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { SignaturePad } from './SignaturePad';
 import { Contract } from '../types';
+import { api } from '../services/api';
 import VisualizadorDeMapa from './VisualizadorDeMapa';
 import { LOGO_3_CORACOES } from '../constants';
 import { getCitiesForDestination, getForbiddenStopsForDestination } from '../utils/itineraryUtils';
@@ -83,17 +84,9 @@ export const DriverSignature: React.FC = () => {
         let parsedData = null;
 
         try {
-          // @ts-ignore
-          if (typeof env !== 'undefined' && env.ASSINATURAS) {
-            // @ts-ignore
-            const raw = await env.ASSINATURAS.get(id);
-            if (raw) parsedData = JSON.parse(raw);
-          } else if (typeof window !== 'undefined' && (window as any).env && (window as any).env.ASSINATURAS) {
-            const raw = await (window as any).env.ASSINATURAS.get(id);
-            if (raw) parsedData = JSON.parse(raw);
-          }
+          parsedData = await api.contracts.get(id);
         } catch (e) {
-          console.warn("KV fetch falhou, tentando fallback");
+          console.warn("API fetch falhou, tentando recuperar fallback do URL");
         }
 
         if (!parsedData && fallbackData) {
@@ -167,28 +160,9 @@ export const DriverSignature: React.FC = () => {
       if (!id) throw new Error("ID ausente");
       
       try {
-        // @ts-ignore
-        if (typeof env !== 'undefined' && env.ASSINATURAS) {
-          // @ts-ignore
-          const str = await env.ASSINATURAS.get(id);
-          if (str) {
-            const c = JSON.parse(str);
-            c.signature = signatureToSave;
-            c.signed_at = new Date().toISOString();
-            // @ts-ignore
-            await env.ASSINATURAS.put(id, JSON.stringify(c));
-          }
-        } else if (typeof window !== 'undefined' && (window as any).env && (window as any).env.ASSINATURAS) {
-          const str = await (window as any).env.ASSINATURAS.get(id);
-          if (str) {
-            const c = JSON.parse(str);
-            c.signature = signatureToSave;
-            c.signed_at = new Date().toISOString();
-            await (window as any).env.ASSINATURAS.put(id, JSON.stringify(c));
-          }
-        }
+        await api.contracts.sign(id, signatureToSave);
       } catch (e) {
-        console.warn("Falha ao salvar no KV (modo offline/fallback)");
+        console.warn("Falha ao salvar na API persistente (modo fallback visual)", e);
       }
 
       setSignatureData(signatureToSave);

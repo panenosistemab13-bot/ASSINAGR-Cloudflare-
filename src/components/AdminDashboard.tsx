@@ -28,6 +28,7 @@ import {
   Coffee,
   Clock
 } from 'lucide-react';
+import { api } from '../services/api';
 import { DriverData, Contract } from '../types';
 import { 
   PieChart, 
@@ -150,34 +151,14 @@ export const AdminDashboard: React.FC = () => {
     });
   };
 
-  // 1. BUSCAR HISTÓRICO REAL DO KV / LOCAL
+  // 1. BUSCAR HISTÓRICO REAL DA API WORKER CLOUDFLARE
   const fetchHistory = async () => {
     setHistoryLoading(true);
     try {
-      let data: any[] = [];
-      // @ts-ignore
-      if (typeof env !== 'undefined' && env.ASSINATURAS) {
-        // @ts-ignore
-        const val = await env.ASSINATURAS.list();
-        const keys = val.keys || [];
-        for (let k of keys) {
-          // @ts-ignore
-          const raw = await env.ASSINATURAS.get(k.name);
-          if (raw) data.push(JSON.parse(raw));
-        }
-      } else if (typeof window !== 'undefined' && (window as any).env && (window as any).env.ASSINATURAS) {
-        const val = await (window as any).env.ASSINATURAS.list();
-        for (let k of val.keys || []) {
-          const raw = await (window as any).env.ASSINATURAS.get(k.name);
-          if (raw) data.push(JSON.parse(raw));
-        }
-      } else {
-        throw new Error("KV indisponível");
-      }
-      data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      const data = await api.contracts.list();
       setContracts(data);
     } catch (error) {
-      console.log("Histórico local não implementado devido à ausência de servidor, mostrando lista vazia para evitar erro.", error);
+      console.log("Erro ao acessar API Worker, não foi possível carregar o histórico.", error);
     } finally {
       setHistoryLoading(false);
     }
@@ -298,20 +279,12 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
         created_at: new Date().toISOString()
       };
 
-      // TENTA SALVAR NO CLOUDFLARE KV DIRETAMENTE (Se injetado no ambiente)
+      // TENTA SALVAR NO CLOUDFLARE WORKER DIRETAMENTE VIA API
       let usedFallback = false;
       try {
-        // @ts-ignore
-        if (typeof env !== 'undefined' && env.ASSINATURAS) {
-          // @ts-ignore
-          await env.ASSINATURAS.put(newId, JSON.stringify(contractData));
-        } else if (typeof window !== 'undefined' && (window as any).env && (window as any).env.ASSINATURAS) {
-          await (window as any).env.ASSINATURAS.put(newId, JSON.stringify(contractData));
-        } else {
-          throw new Error("KV indisponível no cliente");
-        }
+        await api.contracts.create(contractData);
       } catch (error) {
-        console.log("Fallback Ativado: Gerando link com dados na URL (Base64) devido à ausência do KV no frontend.");
+        console.log("Fallback Ativado: Gerando link com dados na URL (Base64) devido à ausência de resposta da API do Cloudflare.", error);
         usedFallback = true;
       }
 
@@ -343,18 +316,12 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
     if (!confirm('Tem certeza que deseja excluir este registro?')) return;
     
     try {
-      // @ts-ignore
-      if (typeof env !== 'undefined' && env.ASSINATURAS) {
-        // @ts-ignore
-        await env.ASSINATURAS.delete(id);
-      } else if (typeof window !== 'undefined' && (window as any).env && (window as any).env.ASSINATURAS) {
-        await (window as any).env.ASSINATURAS.delete(id);
-      }
+      await api.contracts.delete(id);
       
       // Atualiza a lista na tela imediatamente
       setContracts(contracts.filter(c => c.id !== id));
     } catch (error) {
-      console.error("Erro ao deletar:", error);
+      console.error("Erro ao deletar na API:", error);
       // Fallback: Remove from UI anyway
       setContracts(contracts.filter(c => c.id !== id));
     }
@@ -363,16 +330,13 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
   // 3. MARCAR SE FOI PARA O ONBASE
   const handleOnbaseToggle = async (id: string, newStatus: boolean) => {
     try {
-      // @ts-ignore
-      if (typeof env !== 'undefined' && env.ASSINATURAS) {
-        // ...
-      }
+      await api.contracts.updateOnbase(id, newStatus);
       
       setContracts(contracts.map(c => 
         c.id === id ? { ...c, onbase_status: newStatus } : c
       ));
     } catch (error) {
-      console.error("Erro ao atualizar status:", error);
+      console.error("Erro ao atualizar status na API:", error);
     }
   };
 
