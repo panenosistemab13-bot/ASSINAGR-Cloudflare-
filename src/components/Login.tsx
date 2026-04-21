@@ -27,8 +27,8 @@ export const Login = ({ onLogin }: { onLogin: () => void }) => {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 relative overflow-hidden">
       {/* Futuristic Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-blue-200 rounded-full blur-[120px] opacity-30" />
-        <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-blue-300 rounded-full blur-[120px] opacity-30" />
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-red-200 rounded-full blur-[120px] opacity-30" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-red-300 rounded-full blur-[120px] opacity-30" />
       </div>
 
       <div className="w-full max-w-md bg-white/70 backdrop-blur-2xl border border-white/50 rounded-3xl shadow-2xl p-8 relative z-10">
@@ -44,7 +44,7 @@ export const Login = ({ onLogin }: { onLogin: () => void }) => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-white/50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+              className="w-full bg-white/50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
               placeholder="Identificação"
               required
             />
@@ -52,7 +52,7 @@ export const Login = ({ onLogin }: { onLogin: () => void }) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+              className="w-full bg-white/50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
               placeholder="Código de acesso"
               required
             />
@@ -68,7 +68,7 @@ export const Login = ({ onLogin }: { onLogin: () => void }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3.5 font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-70"
+            className="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl py-3.5 font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/20 disabled:opacity-70"
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
