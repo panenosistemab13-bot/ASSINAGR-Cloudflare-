@@ -316,6 +316,7 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
           placa: parsedInfo.cavalo || "ABC-1234",             // Pegar do seu input/planilha
           cpf: parsedInfo.cpf || "000.000.000-00",          // Pegar do seu input/planilha
           mapa_arquivo: mapaArquivo,
+          status: 'pendente',
           termo_personalizado: termoGerado // SALVANDO O TERMO GERADO COM .REPLACE()
         },
         onbase_status: false,
@@ -1237,22 +1238,23 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
   };
 
   const stats = [
-    { name: 'Assinados', value: contracts.filter(c => c.signature).length, color: '#10b981' },
-    { name: 'Pendentes', value: contracts.filter(c => !c.signature).length, color: '#f59e0b' },
+    { name: 'Assinados', value: contracts.filter(c => c.data.status === 'assinado').length, color: '#10b981' },
+    { name: 'Pendentes', value: contracts.filter(c => c.data.status === 'pendente' || !c.data.status).length, color: '#f59e0b' },
   ];
 
   const filteredContracts = contracts.filter(c => {
     const matchesSearch = 
       c.data.motorista?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.data.cpf?.includes(searchTerm) ||
+      c.data.placa?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.data.cavalo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.data.carreta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.id.includes(searchTerm);
     
     const matchesStatus = 
       statusFilter === 'all' ||
-      (statusFilter === 'signed' && c.signature) ||
-      (statusFilter === 'pending' && !c.signature);
+      (statusFilter === 'signed' && c.data.status === 'assinado') ||
+      (statusFilter === 'pending' && (c.data.status === 'pendente' || !c.data.status));
       
     return matchesSearch && matchesStatus;
   });
@@ -1768,10 +1770,10 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
-                    { label: 'Total de Termos', value: contracts.length, icon: FileText, color: 'red', filter: 'all' },
-                    { label: 'Assinados', value: contracts.filter(c => c.signature).length, icon: CheckCircle2, color: 'emerald', filter: 'signed' },
-                    { label: 'Pendentes', value: contracts.filter(c => !c.signature).length, icon: Clock, color: 'amber', filter: 'pending' },
-                    { label: 'Taxa de Sucesso', value: `${contracts.length ? Math.round((contracts.filter(c => c.signature).length / contracts.length) * 100) : 0}%`, icon: ShieldCheck, color: 'red', filter: 'all' },
+                    {label: 'Total de Termos', value: contracts.length, icon: FileText, color: 'red', filter: 'all' },
+                    {label: 'Assinados', value: contracts.filter(c => c.data.status === 'assinado').length, icon: CheckCircle2, color: 'emerald', filter: 'signed' },
+                    {label: 'Pendentes', value: contracts.filter(c => c.data.status === 'pendente' || !c.data.status).length, icon: Clock, color: 'amber', filter: 'pending' },
+                    {label: 'Taxa de Sucesso', value: `${contracts.length ? Math.round((contracts.filter(c => c.data.status === 'assinado').length / contracts.length) * 100) : 0}%`, icon: ShieldCheck, color: 'red', filter: 'all' },
                   ].map((stat, i) => (
                     <button 
                       key={i} 
@@ -1884,7 +1886,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                     </div>
                                   </td>
                                   <td className="px-6 py-4">
-                                    {contract.signature ? (
+                                    {contract.data.status === 'assinado' ? (
                                       <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold uppercase">
                                         <CheckCircle2 className="w-3 h-3" />
                                         Assinado
