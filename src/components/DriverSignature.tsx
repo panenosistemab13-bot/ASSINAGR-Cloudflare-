@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { SignaturePad } from './SignaturePad';
 import { Contract } from '../types';
-import { api } from '../services/api';
 import VisualizadorDeMapa from './VisualizadorDeMapa';
 import { LOGO_3_CORACOES } from '../constants';
 import { getCitiesForDestination, getForbiddenStopsForDestination } from '../utils/itineraryUtils';
@@ -81,11 +80,26 @@ export const DriverSignature: React.FC = () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const fallbackData = urlParams.get('data');
-        let parsedData = await api.contracts.get(id);
+        let parsedData = null;
+
+        try {
+          // @ts-ignore
+          if (typeof env !== 'undefined' && env.ASSINATURAS) {
+            // @ts-ignore
+            const raw = await env.ASSINATURAS.get(id);
+            if (raw) parsedData = JSON.parse(raw);
+          } else if (typeof window !== 'undefined' && (window as any).env && (window as any).env.ASSINATURAS) {
+            const raw = await (window as any).env.ASSINATURAS.get(id);
+            if (raw) parsedData = JSON.parse(raw);
+          }
+        } catch (e) {
+          console.warn("KV fetch falhou, tentando fallback");
+        }
 
         if (!parsedData && fallbackData) {
           try {
-            const decoded = JSON.parse(decodeURIComponent(fallbackData));
+            // Decode safely regardless of UTF-8 chars
+            const decoded = JSON.parse(decodeURIComponent(escape(atob(fallbackData))));
             parsedData = {
               id: id,
               data: decoded,
@@ -151,14 +165,37 @@ export const DriverSignature: React.FC = () => {
     setSaving(true);
     try {
       if (!id) throw new Error("ID ausente");
-      await api.contracts.sign(id, signatureToSave);
+      
+      try {
+        // @ts-ignore
+        if (typeof env !== 'undefined' && env.ASSINATURAS) {
+          // @ts-ignore
+          const str = await env.ASSINATURAS.get(id);
+          if (str) {
+            const c = JSON.parse(str);
+            c.signature = signatureToSave;
+            c.signed_at = new Date().toISOString();
+            // @ts-ignore
+            await env.ASSINATURAS.put(id, JSON.stringify(c));
+          }
+        } else if (typeof window !== 'undefined' && (window as any).env && (window as any).env.ASSINATURAS) {
+          const str = await (window as any).env.ASSINATURAS.get(id);
+          if (str) {
+            const c = JSON.parse(str);
+            c.signature = signatureToSave;
+            c.signed_at = new Date().toISOString();
+            await (window as any).env.ASSINATURAS.put(id, JSON.stringify(c));
+          }
+        }
+      } catch (e) {
+        console.warn("Falha ao salvar no KV (modo offline/fallback)");
+      }
+
       setSignatureData(signatureToSave);
       setSigned(true);
       setShowConfirmModal(false);
     } catch (err) {
-      console.error("Erro ao salvar assinatura:", err);
-      // We can't use alert, so we might just log or show an error state. 
-      // For now, we'll just close the modal and let the user try again.
+      console.error("Erro ao processar assinatura:", err);
       setShowConfirmModal(false);
     } finally {
       setSaving(false);
