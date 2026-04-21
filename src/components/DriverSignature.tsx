@@ -58,6 +58,7 @@ export const DriverSignature: React.FC = () => {
   const { id: paramId } = useParams<{ id: string }>();
   const id = paramId || new URLSearchParams(window.location.search).get('id');
   const [contract, setContract] = useState<Contract | null>(null);
+  const [terms, setTerms] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [signed, setSigned] = useState(false);
@@ -79,31 +80,29 @@ export const DriverSignature: React.FC = () => {
       if (!id) return;
       
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const fallbackData = urlParams.get('data');
-        let parsedData = null;
+        const [parsedData, termsData] = await Promise.all([
+          api.contracts.get(id).catch(async () => {
+            console.warn("API fetch falhou, tentando recuperar fallback do URL");
+            const urlParams = new URLSearchParams(window.location.search);
+            const fallbackData = urlParams.get('data');
+            if (fallbackData) {
+              const decoded = JSON.parse(decodeURIComponent(escape(atob(fallbackData))));
+              return {
+                id: id,
+                data: decoded,
+                signature: null,
+                signed_at: null,
+                created_at: new Date().toISOString(),
+                onbase_status: false
+              } as Contract;
+            }
+            return null;
+          }),
+          api.settings.getTerms().catch(() => null)
+        ]);
 
-        try {
-          parsedData = await api.contracts.get(id);
-        } catch (e) {
-          console.warn("API fetch falhou, tentando recuperar fallback do URL");
-        }
-
-        if (!parsedData && fallbackData) {
-          try {
-            // Decode safely regardless of UTF-8 chars
-            const decoded = JSON.parse(decodeURIComponent(escape(atob(fallbackData))));
-            parsedData = {
-              id: id,
-              data: decoded,
-              signature: null,
-              signed_at: null,
-              created_at: new Date().toISOString(),
-              onbase_status: false
-            } as Contract;
-          } catch (e) {
-            console.error("Falha ao decodificar a carga fallback", e);
-          }
+        if (termsData) {
+          setTerms(termsData);
         }
 
         if (parsedData) {
@@ -328,6 +327,10 @@ export const DriverSignature: React.FC = () => {
                     <p className="whitespace-pre-line font-medium text-slate-800">
                       {contract.data.termo_personalizado}
                     </p>
+                  ) : terms?.termo_responsabilidade ? (
+                    <div className="whitespace-pre-line font-medium text-slate-800">
+                      {terms.termo_responsabilidade}
+                    </div>
                   ) : (
                     <>
                       <p>

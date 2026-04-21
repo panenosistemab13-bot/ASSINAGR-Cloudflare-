@@ -1,0 +1,10 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Para simplificar essa fase de testes do motorista sem login:
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { LOGO_3_CORACOES } from '../constants';
 import { getCitiesForDestination } from '../utils/itineraryUtils';
+import { api } from '../services/api';
 
 interface VisualizadorDeMapaProps {
   destination: string;
@@ -23,8 +24,14 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
   const [mapImage, setMapImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [terms, setTerms] = useState<any>(null);
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   useEffect(() => {
+    api.settings.getTerms().then(data => {
+      if (data) setTerms(data);
+    }).catch(console.error);
+
     const fetchMap = async () => {
       if (!destination) {
         setLoading(false);
@@ -35,8 +42,13 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         setLoading(true);
         setError(false);
         
-        // Use map image from public directory or a CDN when deployed
-        if (mapa_arquivo) {
+        // Verifica se temos a chave do Google Maps configurada no VITE_GOOGLE_MAPS_API_KEY
+        if (googleMapsApiKey) {
+          // Renderiza o mapa estático oficial do google maps se a chave existir
+          const targetLocation = encodeURIComponent(destination);
+          setMapImage(`https://maps.googleapis.com/maps/api/staticmap?center=${targetLocation}&zoom=10&size=600x450&maptype=roadmap&markers=color:red%7Clabel:D%7C${targetLocation}&key=${googleMapsApiKey}`);
+        } else if (mapa_arquivo) {
+          // Fallback para arquivo estático
           setMapImage(`/mapas-rotas/${mapa_arquivo}`);
         } else {
           setError(true);
@@ -50,7 +62,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
     };
 
     fetchMap();
-  }, [destination, mapa_arquivo]);
+  }, [destination, mapa_arquivo, googleMapsApiKey]);
 
   const handleImageError = () => {
     console.warn("Erro ao carregar imagem do mapa, tentando fallback...");
@@ -100,9 +112,15 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
       {/* Orientações */}
       <div className="p-3 bg-white border-b-2 border-slate-800 text-[10px] leading-tight text-slate-800 space-y-1">
         <p className="font-bold">Orientações sobre o PLANO DE ROTA</p>
-        <p>a. É proibida parada nos primeiros 150 km iniciais, exceto problema mecânico/elétrico;</p>
-        <p>b. Respeitar o horário de rodagem, no período de 05h00min às 22h00min para produto acabado e 05h00min às 19h00min para o transporte de grãos;</p>
-        <p>c. Qualquer desvio de trajeto sem prévia autorização é uma falta grave.</p>
+        <div className="whitespace-pre-line">
+          {terms?.orientacoes_rota || (
+            <>
+              <p>a. É proibida parada nos primeiros 150 km iniciais, exceto problema mecânico/elétrico;</p>
+              <p>b. Respeitar o horário de rodagem, no período de 05h00min às 22h00min para produto acabado e 05h00min às 19h00min para o transporte de grãos;</p>
+              <p>c. Qualquer desvio de trajeto sem prévia autorização é uma falta grave.</p>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Título da Rota */}
