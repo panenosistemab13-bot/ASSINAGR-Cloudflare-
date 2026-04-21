@@ -82,7 +82,7 @@ const SECURITY_PHRASES = [
   "O Gerenciamento de Risco é seu maior aliado na estrada."
 ];
 
-const MAPA_REFERENCIA = {
+export const MAPA_REFERENCIA = {
   "NATAL - VIA MONTES CLAROS": "NATAL_MONTES_CLAROS.png",
   "NATAL - VIA ANTONIO DIAS": "NATAL_ANTONIO_DIAS.png",
   "NATAL - EUSEBIO": "NATAL_EUSEBIO.png",
@@ -305,6 +305,7 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
 
       const sortedKeys = Object.keys(MAPA_REFERENCIA).sort((a, b) => b.length - a.length);
       const nomeArquivoMapa = sortedKeys.find(key => searchString.includes(key));
+      const rotaDetectada = nomeArquivoMapa || searchString;
       const mapaArquivo = nomeArquivoMapa ? MAPA_REFERENCIA[nomeArquivoMapa as keyof typeof MAPA_REFERENCIA] : "PADRAO.png";
       
       // Objeto com os dados que você colou da planilha
@@ -316,6 +317,7 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
           placa: parsedInfo.cavalo || "ABC-1234",             // Pegar do seu input/planilha
           cpf: parsedInfo.cpf || "000.000.000-00",          // Pegar do seu input/planilha
           mapa_arquivo: mapaArquivo,
+          rota: rotaDetectada,
           status: 'pendente',
           termo_personalizado: termoGerado // SALVANDO O TERMO GERADO COM .REPLACE()
         },
@@ -343,7 +345,7 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
       
       // GERAR LINK - Falback seguro via Base64 (suporta acentos PT-BR)
       const base64Data = btoa(unescape(encodeURIComponent(JSON.stringify(contractData.data))));
-      const url = `${window.location.origin}/sign/${newId}?id=${newId}&data=${base64Data}`;
+      const url = `${window.location.origin}/sign/${newId}?id=${newId}&rota=${encodeURIComponent(rotaDetectada)}&data=${base64Data}`;
       setGeneratedLink(url);
       setParsedData(contractData.data as any);
       
@@ -1019,11 +1021,14 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     // Draw image first with a slight "zoom" to eliminate white margins
     let mapLoaded = false;
     try {
-      const isNatal = destino.toUpperCase().includes('NATAL');
+      const rotaParam = contract.data.rota || destino;
+      const terms = await api.settings.getTerms();
       
-      if (isNatal) {
-        const natalUrl = "https://i.postimg.cc/KcCxBb3N/NATAL.png";
-        const response = await fetch(natalUrl);
+      const key = `url_mapa_${rotaParam.toUpperCase().replace(/\s+/g, '_')}`;
+      const dynamicUrl = terms?.[key] || terms?.url_mapa || (rotaParam.toUpperCase().includes('NATAL') ? 'https://i.postimg.cc/KcCxBb3N/NATAL.png' : null);
+
+      if (dynamicUrl) {
+        const response = await fetch(dynamicUrl);
         if (response.ok) {
           const blob = await response.blob();
           const base64 = await new Promise<string>((resolve) => {

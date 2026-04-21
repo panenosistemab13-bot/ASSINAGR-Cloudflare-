@@ -42,6 +42,7 @@ export interface DriverData {
   mapa_arquivo?: string;
   paradas_proibidas?: string;
   termo_personalizado?: string;
+  rota?: string;
 }
 
 export interface Contract {

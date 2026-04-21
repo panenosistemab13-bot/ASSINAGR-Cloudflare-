@@ -5,6 +5,7 @@ import L from 'leaflet';
 import { LOGO_3_CORACOES } from '../constants';
 import { getCitiesForDestination } from '../utils/itineraryUtils';
 import { api } from '../services/api';
+import { MAPA_REFERENCIA } from './AdminDashboard';
 
 // Correção para ícones do Leaflet no Vite
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -140,7 +141,38 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
     );
   };
 
-  const isNatal = destination?.toUpperCase().includes('NATAL');
+  // 1. Identificar a Rota (via parâmetro de URL ou detecção de palavra-chave no destino)
+  const getSelectedRoute = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const rotaParam = urlParams.get('rota');
+    if (rotaParam) return rotaParam.toUpperCase();
+
+    const dest = destination?.toUpperCase() || "";
+    // Lista de referência por prioridade (do mais específico para o mais geral)
+    const sortedKeys = Object.keys(MAPA_REFERENCIA).sort((a, b) => b.length - a.length);
+    const match = sortedKeys.find(key => dest.includes(key));
+    return match || dest;
+  };
+
+  const currentRoute = getSelectedRoute();
+
+  // 2. Buscar a URL dinâmica do banco de dados (Firestore: settings/termos)
+  const getDynamicImageUrl = () => {
+    if (!terms) return null;
+    
+    // Procura por campos como: url_mapa_NATAL, url_imagem_NATAL, ou dentro de um objeto 'rotas'
+    // Priorizamos o padrão configurável: url_mapa_[NOME_DA_ROTA]
+    const key = `url_mapa_${currentRoute.replace(/\s+/g, '_')}`;
+    const keyAlternative = `url_imagem_${currentRoute.replace(/\s+/g, '_')}`;
+    
+    return terms[key] || terms[keyAlternative] || terms.url_mapa || terms.url_imagem || null;
+  };
+
+  const dynamicUrl = getDynamicImageUrl();
+
+  // Fallback para NATAL fixo conforme pedido anterior se não houver no banco
+  const natalFallback = currentRoute.includes('NATAL') ? 'https://i.postimg.cc/KcCxBb3N/NATAL.png' : null;
+  const finalImageUrl = dynamicUrl || natalFallback;
 
   return (
     <div className="w-full bg-white border-2 border-slate-800 rounded-none overflow-hidden shadow-none font-sans relative">
@@ -181,7 +213,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
       {/* Título da Rota */}
       <div className="bg-slate-100 p-2 border-b-2 border-slate-800 text-center">
         <h3 className="text-[11px] font-bold text-slate-900 uppercase">
-          Plano de Rota ({destination})
+          Plano de Rota ({currentRoute})
         </h3>
       </div>
 
@@ -189,12 +221,12 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         {/* Área do Mapa (Esquerda) */}
         <div className="w-full h-full bg-slate-50 relative overflow-hidden flex flex-col md:flex-row">
           <div className="flex-1 relative min-h-[300px] md:min-h-0 border-b-2 md:border-b-0 md:border-r-2 border-slate-800">
-            {isNatal ? (
-              <div className="relative w-full h-full">
+            {finalImageUrl ? (
+              <div className="relative w-full h-full bg-white flex items-center justify-center overflow-hidden">
                 <img 
-                  src="https://i.postimg.cc/KcCxBb3N/NATAL.png" 
-                  alt="Mapa Natal" 
-                  className="w-full h-full object-cover" 
+                  src={finalImageUrl} 
+                  alt={`Mapa ${currentRoute}`} 
+                  className="w-full h-full object-contain" 
                   referrerPolicy="no-referrer"
                 />
                 <WatermarkOverlay />
@@ -204,26 +236,30 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
                 <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Carregando Mapa...</p>
               </div>
-            ) : error || !coords ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-2 z-[1001] bg-white">
-                <p className="text-xs text-slate-400 font-medium italic">Visualização do mapa indisponível</p>
-                <p className="text-[9px] text-slate-300 uppercase tracking-wider font-bold">Destino: {destination}</p>
-              </div>
             ) : (
               <>
-                <MapContainer center={coords} zoom={12} scrollWheelZoom={false}>
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker position={coords}>
-                    <Popup>
-                      Destino: {destination}
-                    </Popup>
-                  </Marker>
-                  <ChangeView center={coords} />
-                </MapContainer>
-                <WatermarkOverlay />
+                {coords ? (
+                  <>
+                    <MapContainer center={coords} zoom={12} scrollWheelZoom={false}>
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={coords}>
+                        <Popup>
+                          Destino: {destination}
+                        </Popup>
+                      </Marker>
+                      <ChangeView center={coords} />
+                    </MapContainer>
+                    <WatermarkOverlay />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-2 z-[1001] bg-white">
+                    <p className="text-xs text-slate-400 font-medium italic">Visualização do mapa indisponível</p>
+                    <p className="text-[9px] text-slate-300 uppercase tracking-wider font-bold">Roteiro: {currentRoute}</p>
+                  </div>
+                )}
               </>
             )}
           </div>
