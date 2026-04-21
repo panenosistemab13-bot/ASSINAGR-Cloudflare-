@@ -1022,10 +1022,10 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     let mapLoaded = false;
     try {
       const rotaParam = contract.data.rota || destino;
-      const terms = await api.settings.getTerms();
+      // Busca dados específicos da rota (documento ID = nome da rota na coleção termos)
+      const routeDoc = await api.routes.get(rotaParam.toUpperCase());
       
-      const key = `url_mapa_${rotaParam.toUpperCase().replace(/\s+/g, '_')}`;
-      const dynamicUrl = terms?.[key] || terms?.url_mapa || (rotaParam.toUpperCase().includes('NATAL') ? 'https://i.postimg.cc/KcCxBb3N/NATAL.png' : null);
+      const dynamicUrl = routeDoc?.url_mapa || (rotaParam.toUpperCase().includes('NATAL') ? 'https://i.postimg.cc/KcCxBb3N/NATAL.png' : null);
 
       if (dynamicUrl) {
         const response = await fetch(dynamicUrl);

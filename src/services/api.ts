@@ -68,5 +68,12 @@ export const api = {
       const dbRef = doc(db, 'settings', 'termos');
       await setDoc(dbRef, data, { merge: true });
     }
+  },
+  routes: {
+    get: async (id: string): Promise<any> => {
+      const dbRef = doc(db, 'termos', id);
+      const snapshot = await getDoc(dbRef);
+      return snapshot.exists() ? snapshot.data() : null;
+    }
   }
 };
