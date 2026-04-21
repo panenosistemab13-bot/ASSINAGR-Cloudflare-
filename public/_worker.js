@@ -160,7 +160,14 @@ export default {
       // Se não for uma rota da API, tenta servir os arquivos estáticos do frontend (Pages)
       if (!path.startsWith('/api')) {
         if (env.ASSETS) {
-          return env.ASSETS.fetch(request);
+          let response = await env.ASSETS.fetch(request);
+          // SPA Fallback: Se o asset direto (ex: /history) não existir, serve o index.html do React
+          if (response.status === 404) {
+            const fallbackUrl = new URL(request.url);
+            fallbackUrl.pathname = '/index.html';
+            return env.ASSETS.fetch(new Request(fallbackUrl));
+          }
+          return response;
         } else {
           return new Response("Frontend route requested, but ASSETS binding is missing.", { status: 404 });
         }
