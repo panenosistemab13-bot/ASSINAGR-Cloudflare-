@@ -44,9 +44,14 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         
         // Verifica se temos a chave do Google Maps configurada no VITE_GOOGLE_MAPS_API_KEY
         if (googleMapsApiKey) {
-          // Renderiza o mapa estático oficial do google maps se a chave existir
-          const targetLocation = encodeURIComponent(destination);
-          setMapImage(`https://maps.googleapis.com/maps/api/staticmap?center=${targetLocation}&zoom=10&size=600x450&maptype=roadmap&markers=color:red%7Clabel:D%7C${targetLocation}&key=${googleMapsApiKey}`);
+          // Prioriza coordenadas se estiverem presentes nos termos (settings/termos)
+          let mapCenter = encodeURIComponent(destination);
+          if (terms?.latitude && terms?.longitude) {
+            mapCenter = `${terms.latitude},${terms.longitude}`;
+          }
+          
+          // Renderiza o mapa estático oficial do google maps
+          setMapImage(`https://maps.googleapis.com/maps/api/staticmap?center=${mapCenter}&zoom=12&size=600x450&maptype=roadmap&markers=color:red%7Clabel:D%7C${mapCenter}&key=${googleMapsApiKey}`);
         } else if (mapa_arquivo) {
           // Fallback para arquivo estático
           setMapImage(`/mapas-rotas/${mapa_arquivo}`);
@@ -62,7 +67,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
     };
 
     fetchMap();
-  }, [destination, mapa_arquivo, googleMapsApiKey]);
+  }, [destination, mapa_arquivo, googleMapsApiKey, terms]);
 
   const handleImageError = () => {
     console.warn("Erro ao carregar imagem do mapa, tentando fallback...");
