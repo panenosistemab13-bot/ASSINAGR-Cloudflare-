@@ -205,7 +205,7 @@ export const DriverSignature: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-red-500" />
         <p className="text-slate-400 font-medium animate-pulse">Carregando documentos...</p>
       </div>
     );
@@ -272,7 +272,7 @@ export const DriverSignature: React.FC = () => {
         <header className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 overflow-hidden border border-indigo-400/30">
+              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20 overflow-hidden border border-red-400/30">
                 <ShieldCheck className="w-7 h-7 text-white" />
               </div>
               <div className="hidden sm:block">
@@ -288,7 +288,7 @@ export const DriverSignature: React.FC = () => {
                 {[1, 2, 3].map((s) => (
                   <div 
                     key={s}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all ${step === s ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : step > s ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all ${step === s ? 'bg-red-600 text-white shadow-md shadow-red-600/20' : step > s ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}
                   >
                     {step > s ? <CheckCircle className="w-4 h-4" /> : s}
                   </div>
@@ -306,7 +306,7 @@ export const DriverSignature: React.FC = () => {
         </header>
 
         {/* Security Tip Banner */}
-        <div className="bg-indigo-600 rounded-2xl p-4 shadow-lg shadow-indigo-600/10 flex items-center gap-4 overflow-hidden relative">
+        <div className="bg-red-600 rounded-2xl p-4 shadow-lg shadow-red-600/10 flex items-center gap-4 overflow-hidden relative">
           <div className="p-2 bg-white/10 rounded-lg shrink-0">
             <Info className="w-5 h-5 text-white" />
           </div>
@@ -384,7 +384,7 @@ export const DriverSignature: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">CPF</p>
-                      <p className="text-sm font-bold text-blue-600">{contract.data.cpf || '-'}</p>
+                      <p className="text-sm font-bold text-red-600">{contract.data.cpf || '-'}</p>
                     </div>
                     <div>
                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Vínculo</p>
@@ -447,7 +447,7 @@ export const DriverSignature: React.FC = () => {
               <div className="flex justify-end pt-6">
                 <button
                   onClick={() => setStep(2)}
-                  className="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all"
+                  className="bg-red-600 text-white px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all"
                 >
                   Li e concordo, Próximo <ChevronRight className="w-5 h-5" />
                 </button>
@@ -464,8 +464,8 @@ export const DriverSignature: React.FC = () => {
               className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-12 space-y-10"
             >
               <div className="flex flex-col items-center text-center space-y-4 border-b border-slate-100 pb-8">
-                <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center">
-                  <Truck className="w-8 h-8 text-indigo-600" />
+                <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center">
+                  <Truck className="w-8 h-8 text-red-600" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900">Plano de Rota GR</h2>
@@ -474,25 +474,25 @@ export const DriverSignature: React.FC = () => {
               </div>
 
               <div className="space-y-8">
-                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center justify-between border-b border-indigo-100 pb-3">
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Origem</span>
-                    <span className="text-sm font-bold text-indigo-900">SANTA LUZIA-MG</span>
+                <div className="bg-red-50 border border-red-100 rounded-2xl p-6 space-y-4">
+                  <div className="flex items-center justify-between border-b border-red-100 pb-3">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Origem</span>
+                    <span className="text-sm font-bold text-red-900">SANTA LUZIA-MG</span>
                   </div>
                   <div className="flex items-center justify-center py-2">
-                    <div className="w-8 h-8 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center text-indigo-400 font-bold">X</div>
+                    <div className="w-8 h-8 rounded-full bg-white border-2 border-red-200 flex items-center justify-center text-red-400 font-bold">X</div>
                   </div>
-                  <div className="flex items-center justify-between border-t border-indigo-100 pt-3">
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Destino</span>
-                    <span className="text-sm font-bold text-indigo-900">{contract.data.destino || 'Gov. Celso Ramos/SC'}</span>
+                  <div className="flex items-center justify-between border-t border-red-100 pt-3">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">Destino</span>
+                    <span className="text-sm font-bold text-red-900">{contract.data.destino || 'Gov. Celso Ramos/SC'}</span>
                   </div>
                   
                   <div className="mt-6 space-y-4">
-                    <div className="flex items-center gap-2 border-b border-indigo-100 pb-2">
-                      <MapPin className="w-4 h-4 text-indigo-500" />
-                      <h4 className="text-xs font-bold text-indigo-900 uppercase tracking-widest">Cidades do Itinerário</h4>
+                    <div className="flex items-center gap-2 border-b border-red-100 pb-2">
+                      <MapPin className="w-4 h-4 text-red-500" />
+                      <h4 className="text-xs font-bold text-red-900 uppercase tracking-widest">Cidades do Itinerário</h4>
                     </div>
-                    <div className="bg-white border border-indigo-100 rounded-xl p-4">
+                    <div className="bg-white border border-red-100 rounded-xl p-4">
                       <p className="text-xs text-slate-600 leading-relaxed italic">
                         {contract.data.trajeto || getCitiesForDestination(
                           contract.data.destino || '', 
@@ -503,9 +503,9 @@ export const DriverSignature: React.FC = () => {
                   </div>
 
                   <div className="mt-6 space-y-4">
-                    <div className="flex items-center gap-2 border-b border-indigo-100 pb-2">
-                      <Truck className="w-4 h-4 text-indigo-500" />
-                      <h4 className="text-xs font-bold text-indigo-900 uppercase tracking-widest">Mapa do Trajeto</h4>
+                    <div className="flex items-center gap-2 border-b border-red-100 pb-2">
+                      <Truck className="w-4 h-4 text-red-500" />
+                      <h4 className="text-xs font-bold text-red-900 uppercase tracking-widest">Mapa do Trajeto</h4>
                     </div>
                     
                     {contract.data.destino ? (
@@ -557,7 +557,7 @@ export const DriverSignature: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setStep(3)}
-                  className="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all"
+                  className="bg-red-600 text-white px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all"
                 >
                   Confirmar Rota, Próximo <ChevronRight className="w-5 h-5" />
                 </button>
@@ -575,8 +575,8 @@ export const DriverSignature: React.FC = () => {
             >
               <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 rounded-lg">
-                    <ClipboardCheck className="w-5 h-5 text-indigo-600" />
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <ClipboardCheck className="w-5 h-5 text-red-600" />
                   </div>
                   <div>
                     <h2 className="font-bold text-slate-800">Check-list Presencial Veicular</h2>
@@ -597,7 +597,7 @@ export const DriverSignature: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">CPF</span>
-                    <span className="font-bold text-blue-600">{contract.data.cpf || '-'}</span>
+                    <span className="font-bold text-red-600">{contract.data.cpf || '-'}</span>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">RG</span>
@@ -729,8 +729,8 @@ export const DriverSignature: React.FC = () => {
                 className="bg-white rounded-3xl shadow-xl max-w-sm w-full p-6 border border-slate-100"
               >
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto">
-                    <ShieldCheck className="w-8 h-8 text-indigo-600" />
+                  <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto">
+                    <ShieldCheck className="w-8 h-8 text-red-600" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900">Deseja finalizar?</h3>
                   <p className="text-sm text-slate-500">
@@ -747,7 +747,7 @@ export const DriverSignature: React.FC = () => {
                     <button
                       onClick={() => pendingSignature && handleFinalize(pendingSignature)}
                       disabled={saving}
-                      className="flex-1 py-3 px-4 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20 flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sim'}
                     </button>

@@ -1237,48 +1237,48 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-red-500/30">
       {/* Modern Sidebar/Nav Layout */}
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Sidebar */}
         <aside className="w-full lg:w-64 bg-slate-900 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] text-white p-6 flex flex-col relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/50 to-slate-900/90 z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-red-900/50 to-slate-900/90 z-0"></div>
           <div className="relative z-10 flex flex-col h-full">
             <div className="flex items-center gap-3 mb-10">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 overflow-hidden border border-indigo-400/30">
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20 overflow-hidden border border-red-400/30">
                 <img src={LOGO_3_CORACOES} alt="3 Corações" className="w-8 h-8 object-contain" />
               </div>
               <div>
                 <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">AssinaGR</h1>
-                <p className="text-[10px] text-indigo-400 uppercase tracking-widest font-semibold">Assinatura Digital</p>
+                <p className="text-[10px] text-red-400 uppercase tracking-widest font-semibold">Assinatura Digital</p>
               </div>
             </div>
 
             <nav className="flex-1 space-y-2">
               <button 
                 onClick={() => setActiveTab('generate')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'generate' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'generate' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
               >
                 <Clipboard className="w-5 h-5" />
                 Importar Dados
               </button>
               <button 
                 onClick={() => setActiveTab('history')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'history' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
               >
                 <History className="w-5 h-5" />
                 Histórico de Termos
               </button>
               <button 
                 onClick={() => setActiveTab('dashboard')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'dashboard' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
               >
                 <LayoutDashboard className="w-5 h-5" />
                 Painel de Controle
               </button>
               <button 
                 onClick={() => setActiveTab('idealizador')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'idealizador' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'idealizador' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
               >
                 <Info className="w-5 h-5" />
                 Idealizador
@@ -1288,7 +1288,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
             <div className="mt-auto pt-6 border-t border-white/10">
               <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/5">
                 <div className="flex items-center gap-2 mb-2">
-                  <Info className="w-4 h-4 text-indigo-400" />
+                  <Info className="w-4 h-4 text-red-400" />
                   <span className="text-[10px] font-bold uppercase text-slate-300">Dica de Segurança</span>
                 </div>
                 <AnimatePresence mode="wait">
@@ -1309,7 +1309,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
 
         {/* Main Content */}
         <main className="flex-1 p-3 lg:p-8 overflow-y-auto bg-slate-50/50 relative">
-          <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-indigo-50/50 to-transparent -z-10"></div>
+          <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-red-50/50 to-transparent -z-10"></div>
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-8">
             <div>
               <h2 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">
@@ -1329,7 +1329,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                     </div>
                   ))}
                   {contracts.length > 3 && (
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-indigo-600">
+                    <div className="w-8 h-8 rounded-full bg-red-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-red-600">
                       +{contracts.length - 3}
                     </div>
                   )}
@@ -1351,7 +1351,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 {/* 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center">
                       <FileText className="w-6 h-6" />
                     </div>
                     <div>
@@ -1378,7 +1378,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                     </div>
                   </div>
                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center">
                       <ShieldCheck className="w-6 h-6" />
                     </div>
                     <div>
@@ -1451,8 +1451,8 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 <div className="xl:col-span-2 space-y-4">
                   <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-sm border border-slate-200">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-indigo-50 rounded-lg">
-                        <Clipboard className="w-5 h-5 text-indigo-600" />
+                      <div className="p-2 bg-red-50 rounded-lg">
+                        <Clipboard className="w-5 h-5 text-red-600" />
                       </div>
                       <h3 className="font-bold text-slate-800">Importar Dados</h3>
                     </div>
@@ -1461,13 +1461,13 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
                       placeholder="Cole aqui a linha copiada da planilha (Motorista, CPF, Placa, Trajeto...)"
-                      className="w-full h-32 lg:h-40 p-3 lg:p-4 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs lg:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none mb-4"
+                      className="w-full h-32 lg:h-40 p-3 lg:p-4 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs lg:text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none mb-4"
                     />
                     
                     <button
                       onClick={handleGenerateAndSave}
                       disabled={loading || !inputText.trim()}
-                      className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold uppercase tracking-widest hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+                      className="w-full py-4 bg-red-600 text-white rounded-xl font-bold uppercase tracking-widest hover:bg-red-700 hover:shadow-lg hover:shadow-red-600/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
                     >
                       {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                         <>
@@ -1557,7 +1557,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm text-slate-700 space-y-3">
                       <p>Olá! Informamos que a vistoria técnica do seu veículo foi concluída com sucesso (Tudo OK). ✅</p>
                       <p>Para prosseguir, por favor, acesse o link abaixo para ler os termos de responsabilidade e realizar a sua assinatura digital.</p>
-                      <p>Link: <a href={generatedLink} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-medium break-all">{generatedLink}</a></p>
+                      <p>Link: <a href={generatedLink} target="_blank" rel="noopener noreferrer" className="text-red-600 font-medium break-all">{generatedLink}</a></p>
                       <p className="font-medium">Importante: Após a sua assinatura, nosso sistema validará a disponibilidade final do veículo para liberação.</p>
                     </div>
                   </div>
@@ -1575,17 +1575,17 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                   {/* Hero Section */}
                   <div className="lg:col-span-12 bg-slate-900 rounded-3xl p-8 lg:p-12 relative overflow-hidden border border-slate-800 shadow-2xl">
                     <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
-                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
                     <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
                     
                     <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
                       <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-widest mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-300 text-xs font-bold uppercase tracking-widest mb-6">
                           <ShieldCheck className="w-4 h-4" />
                           Inovação em Logística
                         </div>
                         <h2 className="text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6 leading-tight">
-                          A Revolução na <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Gestão de Riscos</span>
+                          A Revolução na <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-400">Gestão de Riscos</span>
                         </h2>
                         <p className="text-slate-400 text-lg leading-relaxed">
                           Nossa visão foi criar uma plataforma 100% digital, intuitiva e à prova de fraudes. Eliminando a burocracia e elevando o padrão de segurança da nossa logística.
@@ -1600,7 +1600,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                   {/* Content Bento Grid */}
                   <div className="lg:col-span-7 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
                         <Info className="w-5 h-5" />
                       </div>
                       <h3 className="text-xl font-bold text-slate-900">Nossa Missão</h3>
@@ -1612,7 +1612,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                       <p>
                         Com a implementação da assinatura digital criptografada e a geração automatizada de Termos de Responsabilidade e Planos de Trajeto, o AssinaGR garante que todas as normas de Gerenciamento de Risco sejam rigorosamente documentadas e arquivadas.
                       </p>
-                      <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 border-l-4 border-l-indigo-500">
+                      <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 border-l-4 border-l-red-500">
                         <p className="text-slate-700 font-medium italic">
                           "Isso não é apenas uma melhoria de processo; é uma mudança de paradigma. Estamos protegendo nossos colaboradores, nossas cargas e garantindo a excelência que a marca 3 Corações representa."
                         </p>
@@ -1628,14 +1628,14 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                       </div>
                       <div className="relative z-10 flex flex-col h-full">
                         <div>
-                          <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2">Criador e Idealizador</p>
+                          <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-2">Criador e Idealizador</p>
                           <h3 className="text-2xl font-bold text-white mb-1">Jefferson Augusto</h3>
                           <p className="text-xs text-slate-400 font-medium">Unidade - Santa Luzia</p>
                           <p className="text-xs text-slate-400 font-medium italic">Agente de Risco</p>
                         </div>
                         
                         <div className="flex-1 flex flex-col items-start justify-end mt-8">
-                          <div className="w-px h-16 bg-gradient-to-b from-indigo-500/50 to-transparent mb-4 ml-3"></div>
+                          <div className="w-px h-16 bg-gradient-to-b from-red-500/50 to-transparent mb-4 ml-3"></div>
                           <div className="p-2 rounded-full bg-slate-800/80 border border-slate-700/50 backdrop-blur-sm shadow-inner">
                             <Coffee className="w-5 h-5 text-amber-500" />
                           </div>
@@ -1653,8 +1653,8 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                           <p className="font-bold text-slate-700">26 de Março, 2026</p>
                         </div>
                       </div>
-                      <div className="w-12 h-12 rounded-full border-4 border-indigo-50 flex items-center justify-center">
-                        <div className="w-3 h-3 rounded-full bg-indigo-500 animate-pulse"></div>
+                      <div className="w-12 h-12 rounded-full border-4 border-red-50 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
                       </div>
                     </div>
                   </div>
@@ -1671,17 +1671,17 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
-                    { label: 'Total de Termos', value: contracts.length, icon: FileText, color: 'indigo', filter: 'all' },
+                    { label: 'Total de Termos', value: contracts.length, icon: FileText, color: 'red', filter: 'all' },
                     { label: 'Assinados', value: contracts.filter(c => c.signature).length, icon: CheckCircle2, color: 'emerald', filter: 'signed' },
                     { label: 'Pendentes', value: contracts.filter(c => !c.signature).length, icon: Clock, color: 'amber', filter: 'pending' },
-                    { label: 'Taxa de Sucesso', value: `${contracts.length ? Math.round((contracts.filter(c => c.signature).length / contracts.length) * 100) : 0}%`, icon: ShieldCheck, color: 'indigo', filter: 'all' },
+                    { label: 'Taxa de Sucesso', value: `${contracts.length ? Math.round((contracts.filter(c => c.signature).length / contracts.length) * 100) : 0}%`, icon: ShieldCheck, color: 'red', filter: 'all' },
                   ].map((stat, i) => (
                     <button 
                       key={i} 
                       onClick={() => setStatusFilter(stat.filter as any)}
                       className={`bg-white rounded-2xl p-6 shadow-sm border text-left flex items-center gap-4 transition-all ${
                         statusFilter === stat.filter 
-                          ? 'border-indigo-500 ring-2 ring-indigo-500/10' 
+                          ? 'border-red-500 ring-2 ring-red-500/10' 
                           : 'border-slate-200 hover:border-slate-300'
                       }`}
                     >
@@ -1712,7 +1712,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                         placeholder="Buscar por Motorista, Placa ou CPF..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
                       />
                     </div>
                   </div>
@@ -1733,7 +1733,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                           {historyLoading ? (
                             <tr>
                               <td colSpan={5} className="px-6 py-12 text-center">
-                                <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-200" />
+                                <Loader2 className="w-8 h-8 animate-spin mx-auto text-red-200" />
                               </td>
                             </tr>
                           ) : filteredContracts.length === 0 ? (
@@ -1748,7 +1748,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                 <tr className="group hover:bg-slate-50/80 transition-colors cursor-pointer" onClick={() => setExpandedRow(expandedRow === contract.id ? null : contract.id)}>
                                   <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                      <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs">
+                                      <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-red-600 font-bold text-xs">
                                         {contract.data.motorista?.[0] || 'M'}
                                       </div>
                                       <div>
@@ -1797,7 +1797,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                           navigator.clipboard.writeText(link);
                                           alert("Link copiado!");
                                         }}
-                                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                                         title="Copiar Link"
                                       >
                                         <Copy className="w-4 h-4" />
@@ -1808,7 +1808,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                         className={`p-2 transition-all rounded-lg ${
                                           !contract.signature 
                                             ? 'text-slate-200 cursor-not-allowed' 
-                                            : 'text-slate-400 hover:text-indigo-600 hover:bg-indigo-50'
+                                            : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
                                         }`}
                                         title={!contract.signature ? "Aguardando assinatura" : "Baixar PDF Duplo"}
                                       >
@@ -1823,7 +1823,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                       </button>
                                       <button
                                         onClick={() => setExpandedRow(expandedRow === contract.id ? null : contract.id)}
-                                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                                       >
                                         {expandedRow === contract.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                                       </button>
@@ -1858,7 +1858,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                                     navigator.clipboard.writeText(`${window.location.origin}/sign/${contract.id}`);
                                                     alert("Link copiado!");
                                                   }}
-                                                  className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-colors"
+                                                  className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
                                                 >
                                                   <Copy className="w-4 h-4" />
                                                 </button>
@@ -1909,7 +1909,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                     <div className="md:hidden flex flex-col gap-4">
                       {historyLoading ? (
                         <div className="py-12 text-center">
-                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-200" />
+                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-red-200" />
                         </div>
                       ) : filteredContracts.length === 0 ? (
                         <div className="py-12 text-center text-slate-400 italic text-sm">
@@ -1924,7 +1924,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                             >
                               <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-[10px] shrink-0">
+                                  <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center text-red-600 font-bold text-[10px] shrink-0">
                                     {contract.data.motorista?.[0] || 'M'}
                                   </div>
                                   <div className="min-w-0">
@@ -1945,7 +1945,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                     </span>
                                   )}
                                   {contract.onbase_status && (
-                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded-full text-[8px] font-bold uppercase">
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-red-50 text-red-600 rounded-full text-[8px] font-bold uppercase">
                                       Onbase OK
                                     </span>
                                   )}
@@ -1977,7 +1977,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                     {new Date(contract.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-0.5 text-indigo-600 font-medium">
+                                <div className="flex items-center gap-0.5 text-red-600 font-medium">
                                   {expandedRow === contract.id ? 'Menos' : 'Mais'}
                                   {expandedRow === contract.id ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                                 </div>
@@ -2006,7 +2006,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                       e.stopPropagation();
                                       downloadPDF(contract);
                                     }}
-                                    className="flex-1 flex items-center justify-center gap-2 p-2 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-lg text-xs font-medium hover:bg-indigo-100"
+                                    className="flex-1 flex items-center justify-center gap-2 p-2 bg-red-50 border border-red-100 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100"
                                   >
                                     <Download className="w-4 h-4" />
                                     PDF
