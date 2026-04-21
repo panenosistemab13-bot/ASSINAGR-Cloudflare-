@@ -165,8 +165,15 @@ export const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
     if (activeTab === 'history' || activeTab === 'dashboard') {
       fetchHistory();
+      interval = setInterval(() => {
+        fetchHistory();
+      }, 10000); // 10 seconds polling
+    }
+    return () => {
+      if (interval) clearInterval(interval);
     }
   }, [activeTab]);
 
@@ -1669,15 +1676,25 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                       </div>
                       <h3 className="font-bold text-slate-800">Filtrar Registros</h3>
                     </div>
-                    <div className="relative w-full md:w-96">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input 
-                        type="text"
-                        placeholder="Buscar por Motorista, Placa ou CPF..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                      />
+                    <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+                      <div className="relative w-full md:w-96">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input 
+                          type="text"
+                          placeholder="Buscar por Motorista, Placa ou CPF..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                        />
+                      </div>
+                      <button 
+                        onClick={fetchHistory}
+                        disabled={historyLoading}
+                        className="w-full sm:w-auto px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {historyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Loader2 className="w-4 h-4" />}
+                        Atualizar
+                      </button>
                     </div>
                   </div>
 

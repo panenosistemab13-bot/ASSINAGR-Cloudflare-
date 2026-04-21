@@ -1,6 +1,6 @@
 import { DriverData, Contract } from '../types';
 
-const BASE_URL = 'https://assinagr-cloudflare-2.assinagr.workers.dev';
+const BASE_URL = 'https://assinagr-cloudflare-of1.assinagr.workers.dev';
 
 export const api = {
   contracts: {
