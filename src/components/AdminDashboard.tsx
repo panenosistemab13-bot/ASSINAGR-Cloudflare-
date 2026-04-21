@@ -26,7 +26,9 @@ import {
   ChevronUp,
   Info,
   Coffee,
-  Clock
+  Clock,
+  Settings,
+  Save
 } from 'lucide-react';
 import { api } from '../services/api';
 import { DriverData, Contract } from '../types';
@@ -129,7 +131,41 @@ export const AdminDashboard: React.FC = () => {
   const [parsedData, setParsedData] = useState<DriverData | null>(null);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'generate' | 'history' | 'idealizador'>('generate');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'generate' | 'history' | 'settings' | 'idealizador'>('generate');
+  const [termsData, setTermsData] = useState<any>(null);
+  const [termsLoading, setTermsLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  const fetchTerms = async () => {
+    setTermsLoading(true);
+    try {
+      const data = await api.settings.getTerms();
+      if (data) setTermsData(data);
+    } catch (error) {
+      console.error("Erro ao buscar termos:", error);
+    } finally {
+      setTermsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'settings') {
+      fetchTerms();
+    }
+  }, [activeTab]);
+
+  const handleSaveTerms = async () => {
+    setSaveLoading(true);
+    try {
+      await api.settings.updateTerms(termsData);
+      alert("Configurações salvas com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar termos:", error);
+      alert("Erro ao salvar configurações.");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -200,7 +236,7 @@ export const AdminDashboard: React.FC = () => {
         data: parts[3] || '',
         contato_whats: parts[4] || '',
         hora_liberado: parts[5] || '',
-        status: parts[6] || '',
+        status: parts[6] || 'pendente',
         modelo_carreta: parts[7] || '',
         modelo_cavalo: parts[8] || '',
         fez_contato: parts[9] || '',
@@ -274,7 +310,7 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
       // Objeto com os dados que você colou da planilha
       const contractData = {
         id: newId,
-        dados: { 
+        data: { 
           ...parsedInfo,
           motorista: parsedInfo.motorista || "NOME_DO_MOTORISTA", // Pegar do seu input/planilha
           placa: parsedInfo.cavalo || "ABC-1234",             // Pegar do seu input/planilha
@@ -298,17 +334,17 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
       // Atualiza a lista local temporariamente
       const localContract = {
         id: newId,
-        data: contractData.dados,
+        data: contractData.data,
         onbase_status: false,
         created_at: contractData.created_at
       };
-      setContracts([localContract, ...contracts]);
+      setContracts([localContract as any, ...contracts]);
       
       // GERAR LINK - Falback seguro via Base64 (suporta acentos PT-BR)
-      const base64Data = btoa(unescape(encodeURIComponent(JSON.stringify(contractData.dados))));
+      const base64Data = btoa(unescape(encodeURIComponent(JSON.stringify(contractData.data))));
       const url = `${window.location.origin}/sign/${newId}?id=${newId}&data=${base64Data}`;
       setGeneratedLink(url);
-      setParsedData(contractData.dados as any);
+      setParsedData(contractData.data as any);
       
     } catch (error) {
       console.error("Erro inesperado:", error);
@@ -1134,7 +1170,20 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     return y + 10;
   };
 
-  const downloadPDF = async (contract: Contract) => {
+  const downloadPDF = async (originalContract: Contract) => {
+    setLoading(true);
+    let contract = originalContract;
+    
+    try {
+      // Busca dados mais recentes do Firestore para garantir que a assinatura e status estejam ok
+      const latestContract = await api.contracts.get(originalContract.id);
+      if (latestContract) {
+        contract = latestContract;
+      }
+    } catch (e) {
+      console.warn("Usando dados do cache para PDF pois falhou busca remota", e);
+    }
+
     const doc = new jsPDF();
     
     const transportadora = (contract.data.transportador || '').toUpperCase();
@@ -1184,6 +1233,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     }
 
     doc.save(`documentos_gr_${contract.data.motorista || contract.id}.pdf`);
+    setLoading(false);
   };
 
   const stats = [
@@ -1248,6 +1298,13 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 Painel de Controle
               </button>
               <button 
+                onClick={() => setActiveTab('settings')}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'settings' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+              >
+                <Settings className="w-5 h-5" />
+                Configurações
+              </button>
+              <button 
                 onClick={() => setActiveTab('idealizador')}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'idealizador' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
               >
@@ -1284,10 +1341,10 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-8">
             <div>
               <h2 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-                {activeTab === 'dashboard' ? 'Painel de Controle' : activeTab === 'generate' ? 'Importar Dados' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
+                {activeTab === 'dashboard' ? 'Painel de Controle' : activeTab === 'generate' ? 'Importar Dados' : activeTab === 'settings' ? 'Configurações do GR' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
               </h2>
               <p className="text-slate-500 text-xs lg:text-sm mt-1">
-                {activeTab === 'dashboard' ? 'Visão geral das assinaturas e operações.' : activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
+                {activeTab === 'dashboard' ? 'Visão geral das assinaturas e operações.' : activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'settings' ? 'Ajuste os termos, orientações e coordenadas do mapa.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
               </p>
             </div>
             
@@ -1310,6 +1367,75 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
           </header>
 
           <AnimatePresence mode="wait">
+            {activeTab === 'settings' && (
+              <motion.div
+                key="settings"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200"
+              >
+                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                  <Settings className="w-6 h-6 text-red-600" />
+                  Configurações Globais
+                </h3>
+
+                {termsLoading ? (
+                  <div className="flex flex-col items-center justify-center py-20 gap-4">
+                    <Loader2 className="w-10 h-10 animate-spin text-red-600" />
+                    <p className="text-slate-400 font-medium">Carregando configurações...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700">Latitude do Mapa (Default)</label>
+                        <input 
+                          type="text"
+                          value={termsData?.latitude || ''}
+                          onChange={(e) => setTermsData({...termsData, latitude: e.target.value})}
+                          placeholder="-19.6205842"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700">Longitude do Mapa (Default)</label>
+                        <input 
+                          type="text"
+                          value={termsData?.longitude || ''}
+                          onChange={(e) => setTermsData({...termsData, longitude: e.target.value})}
+                          placeholder="-43.9002578"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">Orientações de Rota (Aparece no Mapa)</label>
+                      <textarea 
+                        value={termsData?.orientacoes_rota || ''}
+                        onChange={(e) => setTermsData({...termsData, orientacoes_rota: e.target.value})}
+                        placeholder="Insira as regras para o motorista..."
+                        rows={6}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all resize-none"
+                      />
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                      <button
+                        onClick={handleSaveTerms}
+                        disabled={saveLoading}
+                        className="bg-red-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-red-700 transition-all disabled:opacity-50 shadow-lg shadow-red-600/20"
+                      >
+                        {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        Salvar Configurações
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
             {activeTab === 'dashboard' ? (
               <motion.div
                 key="dashboard"
@@ -1785,13 +1911,13 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                       </button>
                                       <button 
                                         onClick={() => downloadPDF(contract)}
-                                        disabled={!contract.signature}
+                                        disabled={!contract.signature || contract.data?.status !== 'assinado'}
                                         className={`p-2 transition-all rounded-lg ${
-                                          !contract.signature 
-                                            ? 'text-slate-200 cursor-not-allowed' 
+                                          (!contract.signature || contract.data?.status !== 'assinado') 
+                                            ? 'text-slate-200 cursor-not-allowed text-opacity-30' 
                                             : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
                                         }`}
-                                        title={!contract.signature ? "Aguardando assinatura" : "Baixar PDF Duplo"}
+                                        title={(!contract.signature || contract.data?.status !== 'assinado') ? "Aguardando assinatura concluir" : "Baixar PDF Duplo"}
                                       >
                                         <Download className="w-4 h-4" />
                                       </button>
@@ -1987,7 +2113,12 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                       e.stopPropagation();
                                       downloadPDF(contract);
                                     }}
-                                    className="flex-1 flex items-center justify-center gap-2 p-2 bg-red-50 border border-red-100 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100"
+                                    disabled={!contract.signature || contract.data?.status !== 'assinado'}
+                                    className={`flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-medium transition-all ${
+                                      (!contract.signature || contract.data?.status !== 'assinado')
+                                        ? 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed'
+                                        : 'bg-red-50 border border-red-100 text-red-600 hover:bg-red-100'
+                                    }`}
                                   >
                                     <Download className="w-4 h-4" />
                                     PDF

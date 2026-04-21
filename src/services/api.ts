@@ -29,7 +29,8 @@ export const api = {
       const dbRef = doc(db, 'contracts', id);
       await updateDoc(dbRef, {
         signature,
-        signed_at: new Date().toISOString()
+        signed_at: new Date().toISOString(),
+        'data.status': 'assinado'
       });
     },
     updateOnbase: async (id: string, status: boolean): Promise<void> => {

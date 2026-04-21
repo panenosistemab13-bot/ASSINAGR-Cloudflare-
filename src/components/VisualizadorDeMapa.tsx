@@ -1,8 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
 
 import { LOGO_3_CORACOES } from '../constants';
 import { getCitiesForDestination } from '../utils/itineraryUtils';
 import { api } from '../services/api';
+
+// Correção para ícones do Leaflet no Vite
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const DefaultIcon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 interface VisualizadorDeMapaProps {
   destination: string;
@@ -13,6 +29,15 @@ interface VisualizadorDeMapaProps {
   showWatermark?: boolean;
 }
 
+// Componente para atualizar o centro do mapa quando as coordenadas mudarem
+const ChangeView = ({ center }: { center: [number, number] }) => {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, 12);
+  }, [center, map]);
+  return null;
+};
+
 const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({ 
   destination, 
   itinerary, 
@@ -21,18 +46,19 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
   driverCpf,
   showWatermark = false
 }) => {
-  const [mapImage, setMapImage] = useState<string | null>(null);
+  const [coords, setCoords] = useState<[number, number] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [terms, setTerms] = useState<any>(null);
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   useEffect(() => {
     api.settings.getTerms().then(data => {
       if (data) setTerms(data);
     }).catch(console.error);
+  }, []);
 
-    const fetchMap = async () => {
+  useEffect(() => {
+    const fetchCoords = async () => {
       if (!destination) {
         setLoading(false);
         return;
@@ -42,37 +68,34 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         setLoading(true);
         setError(false);
         
-        // Verifica se temos a chave do Google Maps configurada no VITE_GOOGLE_MAPS_API_KEY
-        if (googleMapsApiKey) {
-          // Prioriza coordenadas se estiverem presentes nos termos (settings/termos)
-          let mapCenter = encodeURIComponent(destination);
-          if (terms?.latitude && terms?.longitude) {
-            mapCenter = `${terms.latitude},${terms.longitude}`;
-          }
-          
-          // Renderiza o mapa estático oficial do google maps
-          setMapImage(`https://maps.googleapis.com/maps/api/staticmap?center=${mapCenter}&zoom=12&size=600x450&maptype=roadmap&markers=color:red%7Clabel:D%7C${mapCenter}&key=${googleMapsApiKey}`);
-        } else if (mapa_arquivo) {
-          // Fallback para arquivo estático
-          setMapImage(`/mapas-rotas/${mapa_arquivo}`);
+        // 1. Verifica no banco se já temos coordenadas
+        if (terms?.latitude && terms?.longitude) {
+          setCoords([parseFloat(terms.latitude), parseFloat(terms.longitude)]);
+          setLoading(false);
+          return;
+        }
+
+        // 2. Fallback: Geocodificação gratuita via Nominatim (OpenStreetMap)
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}&limit=1`);
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+          setCoords([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
         } else {
+          // Se falhar, tenta um fallback genérico (ex: Santa Luzia/MG) ou mostra erro
+          console.warn("Localização não encontrada no Nominatim");
           setError(true);
         }
       } catch (err) {
-        console.error("Erro ao buscar mapa:", err);
+        console.error("Erro ao buscar coordenadas:", err);
         setError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMap();
-  }, [destination, mapa_arquivo, googleMapsApiKey, terms]);
-
-  const handleImageError = () => {
-    console.warn("Erro ao carregar imagem do mapa, tentando fallback...");
-    setError(true);
-  };
+    fetchCoords();
+  }, [destination, terms]);
 
   // Processar o itinerário
   const cities = itinerary 
@@ -86,7 +109,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
     const watermarkText = `CONFIDENCIAL - LOGÍSTICA 3CORAÇÕES | ${driverName || 'MOTORISTA'} | ${driverCpf || 'CPF'}`;
     
     return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.15] select-none z-10">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.10] select-none z-[1000]">
         <div 
           className="w-[200%] h-[200%] -top-1/2 -left-1/2 flex flex-wrap content-start justify-center gap-x-24 gap-y-32 rotate-[-25deg]"
         >
@@ -102,6 +125,14 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
 
   return (
     <div className="w-full bg-white border-2 border-slate-800 rounded-none overflow-hidden shadow-none font-sans relative">
+      <style>{`
+        .leaflet-container {
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+        }
+      `}</style>
+      
       {/* Cabeçalho Profissional (Logo + Título) */}
       <div className="border-b-2 border-slate-800 flex items-center">
         <div className="w-32 p-2 border-r-2 border-slate-800 flex justify-center items-center bg-white">
@@ -135,54 +166,64 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         </h3>
       </div>
 
-      <div className="flex flex-col border-b-2 border-slate-800 min-h-[450px]">
+      <div className="flex flex-col border-b-2 border-slate-800 h-[450px]">
         {/* Área do Mapa (Esquerda) */}
-        <div className="w-full bg-white relative overflow-hidden border-b-2 border-slate-800">
-          {loading ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-              <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Carregando Mapa...</p>
-            </div>
-          ) : error || !mapImage ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-2">
-              <p className="text-xs text-slate-400 font-medium italic">Visualização do mapa indisponível</p>
-              <p className="text-[9px] text-slate-300 uppercase tracking-wider font-bold">Destino: {destination}</p>
-            </div>
-          ) : (
-            <>
-              <img 
-                src={mapImage} 
-                alt={`Mapa para ${destination}`}
-                className="w-full h-full block object-cover relative z-0 scale-125"
-                referrerPolicy="no-referrer"
-                onError={handleImageError}
-              />
-              <WatermarkOverlay />
-            </>
-          )}
-        </div>
-
-        {/* Cidades do Itinerário (Direita) - Restaurada conforme solicitado */}
-        <div className="w-full md:w-72 bg-white flex flex-col">
-          <div className="bg-slate-100 p-2 border-b-2 border-slate-800 text-center">
-            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Cidades do Itinerário</h3>
+        <div className="w-full h-full bg-slate-50 relative overflow-hidden flex flex-col md:flex-row">
+          <div className="flex-1 relative min-h-[300px] md:min-h-0 border-b-2 md:border-b-0 md:border-r-2 border-slate-800">
+            {loading ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-[1001] bg-white/80">
+                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Carregando Mapa...</p>
+              </div>
+            ) : error || !coords ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-2 z-[1001] bg-white">
+                <p className="text-xs text-slate-400 font-medium italic">Visualização do mapa indisponível</p>
+                <p className="text-[9px] text-slate-300 uppercase tracking-wider font-bold">Destino: {destination}</p>
+              </div>
+            ) : (
+              <>
+                <MapContainer center={coords} zoom={12} scrollWheelZoom={false}>
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={coords}>
+                    <Popup>
+                      Destino: {destination}
+                    </Popup>
+                  </Marker>
+                  <ChangeView center={coords} />
+                </MapContainer>
+                <WatermarkOverlay />
+              </>
+            )}
           </div>
-          <div className="flex-1 overflow-auto max-h-[300px] md:max-h-none">
-            <table className="w-full border-collapse text-[10px]">
-              <tbody>
-                {cities.length > 0 ? (
-                  cities.map((city, index) => (
-                    <tr key={index} className="border-b border-slate-200 last:border-0 hover:bg-slate-50">
-                      <td className="p-2 font-medium text-slate-700">{city}</td>
+
+          {/* Cidades do Itinerário (Direita) */}
+          <div className="w-full md:w-72 bg-white flex flex-col shrink-0">
+            <div className="bg-slate-100 p-2 border-b-2 border-slate-800 text-center">
+              <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Cidades do Itinerário</h3>
+            </div>
+            <div className="flex-1 overflow-auto max-h-[150px] md:max-h-none custom-scrollbar">
+              <table className="w-full border-collapse text-[10px]">
+                <tbody>
+                  {cities.length > 0 ? (
+                    cities.map((city, index) => (
+                      <tr key={index} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+                        <td className="p-2 font-medium text-slate-700 flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
+                          {city}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td className="p-4 text-center text-slate-400 italic">Itinerário não disponível</td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td className="p-4 text-center text-slate-400 italic">Itinerário não disponível</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
