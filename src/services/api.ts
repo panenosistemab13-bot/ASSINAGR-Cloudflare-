@@ -37,7 +37,10 @@ export const api = {
       if (!snapshot.exists()) {
         throw new Error('Contract not found');
       }
-      return snapshot.data() as Contract;
+      return {
+        ...snapshot.data(),
+        id: snapshot.id
+      } as Contract;
     },
     sign: async (id: string, signature: string): Promise<void> => {
       const dbRef = doc(db, 'termos', id);

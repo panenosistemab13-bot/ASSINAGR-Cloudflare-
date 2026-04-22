@@ -294,16 +294,15 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
         created_at: new Date().toISOString()
       };
 
-      // TENTA SALVAR NO CLOUDFLARE WORKER DIRETAMENTE VIA API
-      let usedFallback = false;
+      // 1. SALVAR NO FIRESTORE
       try {
         await api.contracts.create(contractData);
       } catch (error) {
-        console.log("Fallback Ativado: Gerando link com dados na URL (Base64) devido à ausência de resposta da API do Cloudflare.", error);
-        usedFallback = true;
+        console.error("Erro ao salvar no Firestore:", error);
+        alert("Erro ao salvar os dados no banco. O link pode não funcionar.");
       }
 
-      // Atualiza a lista local temporariamente
+      // 2. ATUALIZAR LISTA LOCAL
       const localContract = {
         id: newId,
         data: contractData.data,
@@ -312,9 +311,8 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
       };
       setContracts([localContract as any, ...contracts]);
       
-      // GERAR LINK - Falback seguro via Base64 (suporta acentos PT-BR)
-      const base64Data = btoa(unescape(encodeURIComponent(JSON.stringify(contractData.data))));
-      const url = `${window.location.origin}/sign/${newId}?id=${newId}&rota=${encodeURIComponent(rotaDetectada)}&data=${base64Data}`;
+      // 3. GERAR LINK CURTO (Apenas com o ID)
+      const url = `${window.location.origin}/sign/${newId}`;
       setGeneratedLink(url);
       setParsedData(contractData.data as any);
       

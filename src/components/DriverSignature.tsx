@@ -81,21 +81,8 @@ export const DriverSignature: React.FC = () => {
       
       try {
         const [parsedData, termsData] = await Promise.all([
-          api.contracts.get(id).catch(async () => {
-            console.warn("API fetch falhou, tentando recuperar fallback do URL");
-            const urlParams = new URLSearchParams(window.location.search);
-            const fallbackData = urlParams.get('data');
-            if (fallbackData) {
-              const decoded = JSON.parse(decodeURIComponent(escape(atob(fallbackData))));
-              return {
-                id: id,
-                data: decoded,
-                signature: null,
-                signed_at: null,
-                created_at: new Date().toISOString(),
-                onbase_status: false
-              } as Contract;
-            }
+          api.contracts.get(id).catch((err) => {
+            console.error("Erro ao buscar contrato no Firestore:", err);
             return null;
           }),
           api.settings.getTerms().catch(() => null)
@@ -488,6 +475,7 @@ export const DriverSignature: React.FC = () => {
                     {contract.data.destino ? (
                       <VisualizadorDeMapa 
                         destination={contract.data.destino} 
+                        rota={contract.data.rota}
                         itinerary={contract.data.trajeto} 
                         mapa_arquivo={contract.data.mapa_arquivo}
                         driverName={contract.data.motorista}

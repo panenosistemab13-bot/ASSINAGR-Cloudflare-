@@ -7,6 +7,7 @@ import { MAPA_REFERENCIA } from './AdminDashboard';
 
 interface VisualizadorDeMapaProps {
   destination: string;
+  rota?: string;
   itinerary?: string;
   mapa_arquivo?: string;
   driverName?: string;
@@ -16,6 +17,7 @@ interface VisualizadorDeMapaProps {
 
 const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({ 
   destination, 
+  rota,
   itinerary, 
   mapa_arquivo,
   driverName,
@@ -37,10 +39,15 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
 
   // 1. Identificar a ID da Rota (ex: 'NATAL')
   const getSelectedRouteId = () => {
+    // Prioridade 1: Prop rota (vindo do banco de dados)
+    if (rota) return normalizeId(rota);
+
+    // Prioridade 2: Parâmetro na URL (legado)
     const urlParams = new URLSearchParams(window.location.search);
     const rotaParam = urlParams.get('rota');
     if (rotaParam) return normalizeId(rotaParam);
 
+    // Prioridade 3: Identificação por palavra-chave no destino
     const dest = destination?.toUpperCase() || "";
     const sortedKeys = Object.keys(MAPA_REFERENCIA).sort((a, b) => b.length - a.length);
     const match = sortedKeys.find(key => dest.includes(key));
