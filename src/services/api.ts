@@ -22,7 +22,10 @@ export const api = {
     list: async (): Promise<Contract[]> => {
       const q = query(collection(db, 'termos'), orderBy('created_at', 'desc'));
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => doc.data() as Contract);
+      return snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      } as Contract));
     },
     create: async (contractData: any): Promise<void> => {
       const dbRef = doc(db, 'termos', contractData.id);
