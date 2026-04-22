@@ -258,7 +258,8 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
 
       console.log("Termo Gerado com Sucesso:", termoGerado);
 
-      const newId = Math.random().toString(36).substring(2, 9);
+      // Gerar um ID único para o documento do Firestore
+      const newId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
       
       // Identifica qual mapa usar com base no destino da planilha
       const destinoInfo = (parsedInfo.destino || "").toUpperCase();
@@ -1860,7 +1861,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                           </h4>
                                           <div className="flex flex-col sm:flex-row items-center gap-6">
                                             <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
-                                              <QRCodeSVG value={`${window.location.origin}/sign/${contract.id}`} size={100} level="H" />
+                                              <QRCodeSVG value={`${window.location.origin}/sign/${contract.id}`} size={100} level="M" />
                                             </div>
                                             <div className="flex-1 w-full">
                                               <p className="text-xs text-slate-500 mb-2">Link direto para assinatura:</p>
@@ -2054,7 +2055,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                                   </h4>
                                   <div className="flex flex-col items-center gap-4">
                                     <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
-                                      <QRCodeSVG value={`${window.location.origin}/sign/${contract.id}`} size={120} level="H" />
+                                      <QRCodeSVG value={`${window.location.origin}/sign/${contract.id}`} size={120} level="M" />
                                     </div>
                                     <div className="w-full">
                                       <p className="text-[10px] text-slate-500 mb-1.5">Link direto:</p>

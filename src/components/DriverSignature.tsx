@@ -55,8 +55,7 @@ const SECURITY_TIPS = [
 ];
 
 export const DriverSignature: React.FC = () => {
-  const { id: paramId } = useParams<{ id: string }>();
-  const id = paramId || new URLSearchParams(window.location.search).get('id');
+  const { id } = useParams<{ id: string }>();
   const [contract, setContract] = useState<Contract | null>(null);
   const [terms, setTerms] = useState<any>(null);
   const [loading, setLoading] = useState(true);
