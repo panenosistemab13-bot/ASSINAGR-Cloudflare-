@@ -82,6 +82,27 @@ const SECURITY_PHRASES = [
   "O Gerenciamento de Risco é seu maior aliado na estrada."
 ];
 
+const RECICLAGEM_PHRASES = [
+  "Ao informar início de viagem, deverá aguardar a mensagem “Ok, Liberado” que será enviada pela Central de Monitoramento 3corações, autorizando o prosseguimento da viagem;",
+  "Informar todas as paradas e reinícios durante a viagem;",
+  "Ao chegar no local de descarga, enviar macro “CHEGADA NO CLIENTE”, e enviando a macro de “FIM DE VIAGEM”, somente quando a descarga for finalizada;",
+  "É proibido parar antes dos 150 km iniciais, exceto paradas obrigatórias ou problema mecânico/elétrico;",
+  "É proibido pernoite em residência;",
+  "Respeitar o horário de rodagem, no período de 05h00min às 22h00min;",
+  "O veículo será desbloqueado após o pernoite, somente mediante confirmação de senha de segurança do motorista, via teclado;",
+  "Evitar pernoite sob cobertura, evitando perda de sinal da antena;",
+  "Não conceder carona;",
+  "Seguir a rota predeterminada;",
+  "Respeitar o limite de velocidade da via, não excedendo o limite de 80km/h;",
+  "Manter a central informada de todas as anormalidades durante o percurso, mantendo a comunicação, via macro, como também pelos telefones: Fixo (85) 4006.5522 (escolher a opção desejada); WhatsApp (85) 99198.2886 (apenas mensagem e áudio);",
+  "Dirigir preventivamente, evitando acidentes, preservando sua própria vida, a vida de terceiros e também carga do embarcador;",
+  "Não oferecer, dar ou aceitar de quem quer que seja, tanto por conta própria ou através de terceiro, qualquer pagamento, doação, compensação, vantagens ou benefícios de qualquer natureza que constituam prática ilegal ou prática de corrupção sob as leis de qualquer país;",
+  "(Proibido passagem por Sergipe);",
+  "Destino Rio de Janeiro: Agendar escolta com 2 horas de antecedência do ponto de encontro, no pedágio desativado em Duque de Caxias/RJ, evitar rodar depois das 17 horas dentro da área urbana da cidade. Caso necessário, o pernoite acontecerá mais cedo na cidade de Três Rios/RJ (Posto Ipirangão);",
+  "Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e Frango Assado;",
+  "Caso tenha dúvidas, contate nossa central de monitoramento pelos telefones acima informados."
+];
+
 export const MAPA_REFERENCIA = {
   "NATAL - VIA MONTES CLAROS": "NATAL_MONTES_CLAROS.png",
   "NATAL - VIA ANTONIO DIAS": "NATAL_ANTONIO_DIAS.png",
@@ -131,7 +152,24 @@ export const AdminDashboard: React.FC = () => {
   const [parsedData, setParsedData] = useState<DriverData | null>(null);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'generate' | 'history' | 'idealizador'>('generate');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'generate' | 'history' | 'idealizador' | 'reciclagem'>('generate');
+  const [operacaoEspecial, setOperacaoEspecial] = useState('');
+
+  const OPERACOES_ESPECIAIS = [
+    "EUSEBIO / NATAL",
+    "LIBERAÇÃO DA SEMANA",
+    "PUXADA VESPASIANO",
+    "RECICLAGEM",
+    "TROCA DE CONDUTOR",
+    "TROCA DE DESTINO",
+    "TROCA DE DESTINO E CONDUTOR",
+    "RECICLAGEM VIA TELEFONE",
+    "CUIABA / PORTO VELHO",
+    "OP RODOMINAS - CAVALO DE MANOBRA",
+    "TROCA CAVALO / CONDUTOR",
+    "CLIENTE - SEGURO PROPRIO",
+    "OP RODOMINAS"
+  ];
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -246,7 +284,9 @@ Comprometo-me a entregar a carga ao destinatário, em iguais condições em que 
 
 Estou ciente que, em caso de descumprimento das normas indicadas neste documento, poderei ser responsabilizado civil e criminalmente pelos danos causados à carga em caso de sinistro, estando eu em desacordo com as regras impostas a mim. Dessa forma, fica a critério do embarcador me bloquear ou não para carregamento através da Central de Gerenciamento de Riscos.
 
-Também estou ciente de que o veículo não pode ser retirado do local de descarga e/ou estacionamento sem autorização da Logística da Filial.`;
+Também estou ciente de que o veículo não pode ser retirado do local de descarga e/ou estacionamento sem autorização da Logística da Filial.
+${operacaoEspecial ? `\n\nOPERAÇÃO ESPECIAL: ${operacaoEspecial}` : ''}
+`;
 
       // Preencher os dados automaticamente usando .replace()
       const termoGerado = termoTemplate
@@ -289,7 +329,8 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
           mapa_arquivo: mapaArquivo,
           rota: rotaDetectada,
           status: 'pendente',
-          termo_personalizado: termoGerado // SALVANDO O TERMO GERADO COM .REPLACE()
+          termo_personalizado: termoGerado, // SALVANDO O TERMO GERADO COM .REPLACE()
+          operacao_especial: operacaoEspecial // Adicionando a operação especial
         },
         onbase_status: false,
         created_at: new Date().toISOString()
@@ -1292,6 +1333,13 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 <Info className="w-5 h-5" />
                 Idealizador
               </button>
+              <button 
+                onClick={() => setActiveTab('reciclagem')}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'reciclagem' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+              >
+                <AlertCircle className="w-5 h-5" />
+                Reciclagem
+              </button>
             </nav>
 
             <div className="mt-auto pt-6 border-t border-white/10">
@@ -1322,10 +1370,10 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-8">
             <div>
               <h2 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-                {activeTab === 'dashboard' ? 'Painel de Controle' : activeTab === 'generate' ? 'Importar Dados' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
+                {activeTab === 'dashboard' ? 'Painel de Controle' : activeTab === 'generate' ? 'Importar Dados' : activeTab === 'reciclagem' ? 'Reciclagem' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
               </h2>
               <p className="text-slate-500 text-xs lg:text-sm mt-1">
-                {activeTab === 'dashboard' ? 'Visão geral das assinaturas e operações.' : activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
+                {activeTab === 'dashboard' ? 'Visão geral das assinaturas e operações.' : activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'reciclagem' ? 'Frases e advertências para reciclagem de motoristas.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
               </p>
             </div>
             
@@ -1470,8 +1518,19 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
                       placeholder="Cole aqui a linha copiada da planilha (Motorista, CPF, Placa, Trajeto...)"
-                      className="w-full h-32 lg:h-40 p-3 lg:p-4 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs lg:text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none mb-4"
+                      className="w-full h-32 lg:h-40 p-3 lg:p-4 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs lg:text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none mb-2"
                     />
+
+                    <select
+                      value={operacaoEspecial}
+                      onChange={(e) => setOperacaoEspecial(e.target.value)}
+                      className="w-full p-3 lg:p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs lg:text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all mb-4"
+                    >
+                      <option value="">Selecione uma Operação Especial (Opcional)</option>
+                      {OPERACOES_ESPECIAIS.map((op) => (
+                        <option key={op} value={op}>{op}</option>
+                      ))}
+                    </select>
                     
                     <button
                       onClick={handleGenerateAndSave}
@@ -1571,6 +1630,39 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                     </div>
                   </div>
                 )}
+              </motion.div>
+            ) : activeTab === 'reciclagem' ? (
+              <motion.div
+                key="reciclagem"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200"
+              >
+                <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <AlertCircle className="w-8 h-8 text-red-600" />
+                  Advertências e Procedimentos
+                </h2>
+                <ul className="space-y-4">
+                  {RECICLAGEM_PHRASES.map((phrase, idx) => (
+                    <li key={idx} className="flex justify-between items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 text-slate-700">
+                      <div className="flex gap-4">
+                        <span className="font-bold text-red-600 shrink-0">{idx + 1}.</span>
+                        <p>{phrase}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(phrase);
+                          // Opcional: adicionar feedback visual de cópia
+                        }}
+                        className="p-2 hover:bg-slate-200 rounded-lg text-slate-500 hover:text-slate-900 transition-all shrink-0"
+                        title="Copiar frase"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </motion.div>
             ) : activeTab === 'idealizador' ? (
               <motion.div
