@@ -241,7 +241,8 @@ export const AdminDashboard: React.FC = () => {
         modelo_cavalo: parts[8] || '',
         fez_contato: parts[9] || '',
         destino: parts[10] || '',
-        trajeto: parts[10] || '', // Usamos a coluna 11 como Destino/Trajeto principal
+        // Removido trajeto: parts[10] para permitir que o fallback de cidades funcione
+        // se a planilha não tiver uma coluna específica de trajeto.
         transportador: parts[11] || '',
         cavalo: parts[12] || '',
         carreta: parts[13] || '',
@@ -1083,7 +1084,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     doc.text("Cidades do Itinerário :", 10 + mapWidth + itineraryWidth / 2, y + 4, { align: 'center' });
     
     const trajetoRaw = contract.data.trajeto || "";
-    const cities = trajetoRaw 
+    const cities = (trajetoRaw && (trajetoRaw.includes(';') || trajetoRaw.includes('|') || trajetoRaw.split(/\s+/).length > 2)) 
       ? trajetoRaw.split(/[;|\n]+/).map(city => `» ${city.trim()}`).filter(city => city.length > 2)
       : getCitiesForDestination(destino, origem).map(city => `» ${city}`);
 

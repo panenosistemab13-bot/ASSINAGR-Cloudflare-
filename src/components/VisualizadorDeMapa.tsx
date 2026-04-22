@@ -74,7 +74,9 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
   const imageUrl = routeData?.url_mapa;
 
   // Processar o itinerário
-  const cities = itinerary 
+  // Se o itinerário vier da planilha mas for apenas o destino final, 
+  // damos preferência à função getCitiesForDestination que tem a lista completa de paradas.
+  const cities = (itinerary && (itinerary.includes(';') || itinerary.includes('|') || itinerary.split(/\s+/).length > 2)) 
     ? itinerary.split(/[;|\n]+/).map(city => city.trim()).filter(city => city.length > 0)
     : getCitiesForDestination(destination);
 
