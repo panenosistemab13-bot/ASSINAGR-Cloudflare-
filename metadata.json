@@ -1,5 +1,5 @@
 {
-  "name": "PRONT OFICIAL GR (Cloudflare)",
+  "name": "AssinaGR",
   "description": "Sistema de assinatura digital de termos para motoristas com extração automática de dados e integração com Supabase.",
   "requestFramePermissions": []
 }
