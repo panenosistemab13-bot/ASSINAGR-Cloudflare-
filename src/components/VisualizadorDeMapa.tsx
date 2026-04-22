@@ -62,10 +62,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
     loadAllData();
   }, [currentRouteId]);
 
-  // Se houver url_mapa no documento da rota, usamos ele. 
-  // Caso contrário, fallback para o link de NATAL se a ID contiver NATAL.
-  const imageUrl = routeData?.url_mapa || 
-                   (currentRouteId.includes('NATAL') ? 'https://i.postimg.cc/KcCxBb3N/NATAL.png' : null);
+  const imageUrl = routeData?.url_mapa;
 
   // Processar o itinerário
   const cities = itinerary 
@@ -135,7 +132,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
             {loading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-[1001] bg-white">
                 <Loader2 className="w-6 h-6 text-red-600 animate-spin" />
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Carregando Mapa...</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Sincronizando Banco...</p>
               </div>
             ) : imageUrl ? (
               <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
@@ -148,9 +145,14 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
                 <WatermarkOverlay />
               </div>
             ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-2 z-[1001] bg-white">
-                <p className="text-xs text-slate-400 font-medium italic">Visualização do mapa indisponível no banco</p>
-                <p className="text-[9px] text-slate-300 uppercase tracking-wider font-bold">Documento: {currentRouteId} (campo: url_mapa)</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-3 z-[1001] bg-white">
+                <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 text-slate-200" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-slate-600 font-black uppercase tracking-tight">Mapa em atualização</p>
+                  <p className="text-[10px] text-slate-400 font-medium">Aguardando disponibilização do mapa para: <span className="text-indigo-500 font-bold">{currentRouteId}</span></p>
+                </div>
               </div>
             )}
           </div>

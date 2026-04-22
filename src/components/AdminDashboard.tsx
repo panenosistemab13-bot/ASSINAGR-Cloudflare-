@@ -241,6 +241,7 @@ export const AdminDashboard: React.FC = () => {
         modelo_cavalo: parts[8] || '',
         fez_contato: parts[9] || '',
         destino: parts[10] || '',
+        trajeto: parts[10] || '', // Usamos a coluna 11 como Destino/Trajeto principal
         transportador: parts[11] || '',
         cavalo: parts[12] || '',
         carreta: parts[13] || '',
@@ -1025,7 +1026,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
       // Busca dados específicos da rota (documento ID = nome da rota na coleção termos)
       const routeDoc = await api.routes.get(rotaParam.toUpperCase());
       
-      const dynamicUrl = routeDoc?.url_mapa || (rotaParam.toUpperCase().includes('NATAL') ? 'https://i.postimg.cc/KcCxBb3N/NATAL.png' : null);
+      const dynamicUrl = routeDoc?.url_mapa;
 
       if (dynamicUrl) {
         const response = await fetch(dynamicUrl);
@@ -1039,21 +1040,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
           doc.addImage(base64, 'PNG', 10, y, mapWidth, sectionHeight);
           mapLoaded = true;
         }
-      } else if (contract.data.mapa_arquivo) {
-        const publicUrl = `/mapas-rotas/${contract.data.mapa_arquivo}`;
-        const response = await fetch(publicUrl);
-        if (response.ok) {
-          const blob = await response.blob();
-          const base64 = await new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
-          // Zoom in by drawing slightly larger and offset
-          doc.addImage(base64, 'PNG', 10 - 5, y - 5, mapWidth + 10, sectionHeight + 10);
-          mapLoaded = true;
-        }
-      }
+      } 
     } catch (e) {
       console.error("Erro ao carregar mapa para o PDF:", e);
     }
@@ -1071,10 +1058,12 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     doc.rect(10, y, mapWidth, sectionHeight);
 
     if (!mapLoaded) {
-      doc.setFontSize(10);
-      doc.text("MAPA DE TRAJETO", 10 + mapWidth / 2, y + sectionHeight / 2, { align: 'center' });
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.text("Mapa em atualização", 10 + mapWidth / 2, y + sectionHeight / 2, { align: 'center' });
       doc.setFontSize(7);
-      doc.text("(Visualização do mapa indisponível)", 10 + mapWidth / 2, y + sectionHeight / 2 + 5, { align: 'center' });
+      doc.setFont("helvetica", "normal");
+      doc.text(`(Aguardando URL do mapa para: ${contract.data.rota || destino})`, 10 + mapWidth / 2, y + sectionHeight / 2 + 5, { align: 'center' });
     }
 
     // Itinerary Table (Right)
