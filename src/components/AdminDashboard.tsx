@@ -502,6 +502,21 @@ ${operacaoEspecial ? `\n\nOPERAÇÃO ESPECIAL: ${operacaoEspecial}` : ''}
 
     y += 5;
     doc.setFont("helvetica", "bold");
+    doc.text("Vínculo:", col1, y);
+    doc.setFont("helvetica", "bold");
+    doc.text(contract.data.vinculo || '-', col1 + 16, y);
+
+    if (contract.data.operacao_especial) {
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(227, 38, 54); // Red to highlight
+      doc.text("OPERAÇÃO ESPECIAL:", col2, y);
+      doc.setFont("helvetica", "bold");
+      doc.text(contract.data.operacao_especial, col2 + 35, y);
+      doc.setTextColor(0, 0, 0);
+    }
+
+    y += 5;
+    doc.setFont("helvetica", "bold");
     doc.text("Trajeto:", col1, y);
     doc.setFont("helvetica", "bold");
     const origem = contract.data.origem || 'SANTA LUZIA|MG';

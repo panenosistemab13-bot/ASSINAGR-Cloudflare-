@@ -575,6 +575,12 @@ export const DriverSignature: React.FC = () => {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Vínculo</span>
                     <span className="font-bold text-slate-700">{contract.data.vinculo || 'FROTA'}</span>
                   </div>
+                  {contract.data.operacao_especial && (
+                    <div className="md:col-span-3">
+                      <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider block">Operação Especial</span>
+                      <span className="font-bold text-red-600">{contract.data.operacao_especial}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-slate-50 p-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-y border-slate-100">Dados do Veículo</div>
