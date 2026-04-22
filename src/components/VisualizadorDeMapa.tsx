@@ -26,16 +26,25 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
   const [loading, setLoading] = useState(true);
   const [terms, setTerms] = useState<any>(null);
 
+  // Função para remover acentos e normalizar texto para bater com IDs do Firestore
+  const normalizeId = (text: string) => {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toUpperCase()
+      .trim();
+  };
+
   // 1. Identificar a ID da Rota (ex: 'NATAL')
   const getSelectedRouteId = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const rotaParam = urlParams.get('rota');
-    if (rotaParam) return rotaParam.toUpperCase();
+    if (rotaParam) return normalizeId(rotaParam);
 
     const dest = destination?.toUpperCase() || "";
     const sortedKeys = Object.keys(MAPA_REFERENCIA).sort((a, b) => b.length - a.length);
     const match = sortedKeys.find(key => dest.includes(key));
-    return match || dest;
+    return normalizeId(match || dest);
   };
 
   const currentRouteId = getSelectedRouteId();

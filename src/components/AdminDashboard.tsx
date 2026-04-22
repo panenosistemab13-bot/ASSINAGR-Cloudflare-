@@ -1023,8 +1023,15 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     let mapLoaded = false;
     try {
       const rotaParam = contract.data.rota || destino;
+      // Normalização idêntica ao VisualizadorDeMapa
+      const normalizedRotaId = String(rotaParam)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toUpperCase()
+        .trim();
+
       // Busca dados específicos da rota (documento ID = nome da rota na coleção termos)
-      const routeDoc = await api.routes.get(rotaParam.toUpperCase());
+      const routeDoc = await api.routes.get(normalizedRotaId);
       
       const dynamicUrl = routeDoc?.url_mapa;
 
