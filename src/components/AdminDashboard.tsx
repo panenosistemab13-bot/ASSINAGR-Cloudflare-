@@ -131,41 +131,8 @@ export const AdminDashboard: React.FC = () => {
   const [parsedData, setParsedData] = useState<DriverData | null>(null);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'generate' | 'history' | 'settings' | 'idealizador'>('generate');
-  const [termsData, setTermsData] = useState<any>(null);
-  const [termsLoading, setTermsLoading] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'generate' | 'history' | 'idealizador'>('generate');
 
-  const fetchTerms = async () => {
-    setTermsLoading(true);
-    try {
-      const data = await api.settings.getTerms();
-      if (data) setTermsData(data);
-    } catch (error) {
-      console.error("Erro ao buscar termos:", error);
-    } finally {
-      setTermsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (activeTab === 'settings') {
-      fetchTerms();
-    }
-  }, [activeTab]);
-
-  const handleSaveTerms = async () => {
-    setSaveLoading(true);
-    try {
-      await api.settings.updateTerms(termsData);
-      alert("Configurações salvas com sucesso!");
-    } catch (error) {
-      console.error("Erro ao salvar termos:", error);
-      alert("Erro ao salvar configurações.");
-    } finally {
-      setSaveLoading(false);
-    }
-  };
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -364,14 +331,17 @@ Também estou ciente de que o veículo não pode ser retirado do local de descar
     if (!confirm('Tem certeza que deseja excluir este registro?')) return;
     
     try {
-      await api.contracts.delete(id);
+      // Remove da interface imediatamente para dar resposta rápida (Optimistic UI)
+      setContracts(prev => prev.filter(c => c.id !== id));
       
-      // Atualiza a lista na tela imediatamente
-      setContracts(contracts.filter(c => c.id !== id));
+      // Executa a exclusão no Firestore
+      await api.contracts.delete(id);
+      console.log(`Documento ${id} removido com sucesso.`);
     } catch (error) {
-      console.error("Erro ao deletar na API:", error);
-      // Fallback: Remove from UI anyway
-      setContracts(contracts.filter(c => c.id !== id));
+      console.error("Erro fatal ao deletar no Firestore:", error);
+      alert("Houve um erro ao excluir do banco de dados. Por favor, tente novamente.");
+      // Recarrega o histórico para garantir que a UI reflita o estado real do banco
+      fetchHistory();
     }
   };
 
@@ -1317,13 +1287,6 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 Painel de Controle
               </button>
               <button 
-                onClick={() => setActiveTab('settings')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'settings' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
-              >
-                <Settings className="w-5 h-5" />
-                Configurações
-              </button>
-              <button 
                 onClick={() => setActiveTab('idealizador')}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'idealizador' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
               >
@@ -1360,10 +1323,10 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-8">
             <div>
               <h2 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-                {activeTab === 'dashboard' ? 'Painel de Controle' : activeTab === 'generate' ? 'Importar Dados' : activeTab === 'settings' ? 'Configurações do GR' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
+                {activeTab === 'dashboard' ? 'Painel de Controle' : activeTab === 'generate' ? 'Importar Dados' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
               </h2>
               <p className="text-slate-500 text-xs lg:text-sm mt-1">
-                {activeTab === 'dashboard' ? 'Visão geral das assinaturas e operações.' : activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'settings' ? 'Ajuste os termos, orientações e coordenadas do mapa.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
+                {activeTab === 'dashboard' ? 'Visão geral das assinaturas e operações.' : activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
               </p>
             </div>
             
@@ -1386,75 +1349,6 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
           </header>
 
           <AnimatePresence mode="wait">
-            {activeTab === 'settings' && (
-              <motion.div
-                key="settings"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200"
-              >
-                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                  <Settings className="w-6 h-6 text-red-600" />
-                  Configurações Globais
-                </h3>
-
-                {termsLoading ? (
-                  <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <Loader2 className="w-10 h-10 animate-spin text-red-600" />
-                    <p className="text-slate-400 font-medium">Carregando configurações...</p>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Latitude do Mapa (Default)</label>
-                        <input 
-                          type="text"
-                          value={termsData?.latitude || ''}
-                          onChange={(e) => setTermsData({...termsData, latitude: e.target.value})}
-                          placeholder="-19.6205842"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Longitude do Mapa (Default)</label>
-                        <input 
-                          type="text"
-                          value={termsData?.longitude || ''}
-                          onChange={(e) => setTermsData({...termsData, longitude: e.target.value})}
-                          placeholder="-43.9002578"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Orientações de Rota (Aparece no Mapa)</label>
-                      <textarea 
-                        value={termsData?.orientacoes_rota || ''}
-                        onChange={(e) => setTermsData({...termsData, orientacoes_rota: e.target.value})}
-                        placeholder="Insira as regras para o motorista..."
-                        rows={6}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all resize-none"
-                      />
-                    </div>
-
-                    <div className="flex justify-end pt-4">
-                      <button
-                        onClick={handleSaveTerms}
-                        disabled={saveLoading}
-                        className="bg-red-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-red-700 transition-all disabled:opacity-50 shadow-lg shadow-red-600/20"
-                      >
-                        {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                        Salvar Configurações
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            )}
-
             {activeTab === 'dashboard' ? (
               <motion.div
                 key="dashboard"
