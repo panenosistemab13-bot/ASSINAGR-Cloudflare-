@@ -452,86 +452,97 @@ ${operacaoEspecial ? `\n\nOPERAÇÃO ESPECIAL: ${operacaoEspecial}` : ''}
     y += 5;
     
     doc.setFontSize(7.5);
-    const col1 = 20;
+    const col1 = 25;
     const col2 = 80;
-    const col3 = 140;
+    const col3 = 135;
+    
+    // Configura borda
+    doc.setDrawColor(0);
+    doc.rect(20, y, 170, 30); // Quadro
+    y += 6;
+    
+    doc.setFont("helvetica", "normal"); // Simulating Verdana
+    doc.setFontSize(7.5);
 
-    // Row 1
+    // Linha 1
     doc.setFont("helvetica", "bold");
     doc.text("Data:", col1, y);
+    doc.setFont("helvetica", "normal");
     doc.text(new Date(contract.created_at).toLocaleDateString('pt-BR'), col1 + 10, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("CPF:", col2, y);
-    doc.setTextColor(0, 0, 255); // Blue for CPF
+    doc.setTextColor(0, 0, 255); // Blue
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.cpf || '-', col2 + 10, y);
     doc.setTextColor(0, 0, 0);
 
     doc.setFont("helvetica", "bold");
     doc.text("Motorista:", col3, y);
+    doc.setFont("helvetica", "normal");
     doc.text(String(contract.data.motorista || '-').substring(0, 30), col3 + 18, y);
 
-    // Row 2
+    // Linha 2
     y += 5;
     doc.setFont("helvetica", "bold");
     doc.text("Transportadora:", col1, y);
+    doc.setFont("helvetica", "normal");
     doc.text(String(contract.data.transportador || '-').substring(0, 35), col1 + 25, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("Vínculo:", col3, y);
+    doc.setTextColor(0, 0, 255); // Blue
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.vinculo || '-', col3 + 14, y);
+    doc.setTextColor(0, 0, 0);
 
-    // Row 3
+    // Linha 3
     y += 5;
     doc.setFont("helvetica", "bold");
     doc.text("Placa Cavalo:", col1, y);
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.cavalo || '-', col1 + 22, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("Carreta I:", col2, y);
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.carreta || '-', col2 + 16, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("Carreta II:", col3, y);
-    doc.text(contract.data.carreta2 || '-', col3 + 16, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(contract.data.carreta2 || '-', col3 + 18, y);
 
-    // Row 4
+    // Reciclagem abaixo de Carreta II em roxo
     if (contract.data.operacao_especial) {
       y += 5;
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(227, 38, 54); // Red to highlight
+      doc.setTextColor(128, 0, 128); // Roxo
       doc.text(contract.data.operacao_especial.toUpperCase(), col3, y);
       doc.setTextColor(0, 0, 0);
     }
 
-    y += 5;
+    // Trajeto e Tecnologia
+    y += 7;
     doc.setFont("helvetica", "bold");
     doc.text("Trajeto:", col1, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     const origem = contract.data.origem || 'SANTA LUZIA|MG';
     const destino = contract.data.destino || 'GOV. CELSO RAMOS';
-    
-    doc.text(origem, col1 + 13, y);
-    const origemWidth = doc.getTextWidth(origem);
-    
-    doc.setDrawColor(0);
-    doc.rect(col1 + 15 + origemWidth, y - 3.5, 4, 4);
-    doc.setFont("helvetica", "bold");
-    doc.text("X", col1 + 16 + origemWidth, y - 0.5);
-    
-    doc.setFont("helvetica", "bold");
-    doc.text(destino, col1 + 21 + origemWidth, y);
+    doc.text(`${origem} [X] ${destino}`, col1 + 15, y);
 
     y += 5;
     doc.setFont("helvetica", "bold");
     doc.text("Tecnologia:", col1, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     const tecnologia = (contract.data.tecnologia || '-').toUpperCase();
     if (tecnologia.includes('SASCAR')) {
-      doc.setTextColor(255, 0, 0); // Red for SASCAR
+      doc.setTextColor(255, 0, 0); // Red
     }
     doc.text(tecnologia, col1 + 18, y);
     doc.setTextColor(0, 0, 0);
+
+    y += 10; // Espaço após o quadro
 
     // Rules Section
     y += 8;    // Check if y is too close to bottom, add page if needed
