@@ -628,11 +628,9 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
       y = 20;
     }
 
-    const currentDateStr = contract.signed_at 
-      ? new Date(contract.signed_at).toLocaleString('pt-BR') 
-      : new Date().toLocaleString('pt-BR');
-    
-    doc.text(`Santa Luzia, ${currentDateStr}`, pageWidth / 2, y, { align: 'center' });
+    const currentDateStr = new Date().toLocaleDateString('pt-BR');
+    const city = "Santa Luzia, ";
+    doc.text(`${city}${currentDateStr}`, pageWidth / 2, y, { align: 'center' });
     
     y += 15;
     doc.setFont("helvetica", "bold");
@@ -642,12 +640,11 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     y += 4;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
-    doc.text("(RG do motorista)", pageWidth / 2, y, { align: 'center' });
+    doc.text("RG do Motorista", pageWidth / 2, y, { align: 'center' });
     
     y += 15;
     if (contract.signature) {
       try {
-        // Compact and centered signature
         doc.addImage(contract.signature, 'PNG', pageWidth / 2 - 20, y - 10.5, 40, 10);
       } catch (e) {
         console.error("Failed to add signature to PDF", e);
@@ -655,11 +652,11 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     }
     doc.line(60, y, 150, y);
     y += 4;
-    doc.text("(Assinatura do Motorista)", pageWidth / 2, y, { align: 'center' });
+    doc.text("Assinatura do Motorista", pageWidth / 2, y, { align: 'center' });
     
     y += 10;
     
-    return y + 10;
+    return y;
   };
 
   const generateChecklistContent = (doc: jsPDF, contract: Contract) => {
@@ -1833,6 +1830,31 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                         {historyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Loader2 className="w-4 h-4" />}
                         Atualizar
                       </button>
+
+                      {contracts.length > 0 && (
+                        <button
+                          onClick={async () => {
+                            if (confirm('Tem certeza que deseja apagar TODOS os termos de uma vez? Esta ação não pode ser desfeita.')) {
+                              setHistoryLoading(true);
+                              try {
+                                await Promise.all(contracts.map(c => api.contracts.delete(c.id)));
+                                setContracts([]);
+                                alert('Todos os termos foram apagados com sucesso.');
+                              } catch (error) {
+                                console.error('Erro ao apagar todos os termos:', error);
+                                alert('Erro ao apagar os termos. Tente novamente.');
+                              } finally {
+                                setHistoryLoading(false);
+                              }
+                            }
+                          }}
+                          disabled={historyLoading}
+                          className="w-full sm:w-auto px-4 py-3 bg-red-100 text-red-600 hover:bg-red-200 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Apagar todos
+                        </button>
+                      )}
                     </div>
                   </div>
 

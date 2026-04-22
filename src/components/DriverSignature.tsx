@@ -554,14 +554,14 @@ export const DriverSignature: React.FC = () => {
 
               <div className="p-0">
                 <div className="bg-slate-50 p-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100">Dados do Motorista</div>
-                <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm border border-black">
                   <div className="md:col-span-3">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Motorista</span>
                     <span className="font-bold text-slate-700">{contract.data.motorista || '-'}</span>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">CPF</span>
-                    <span className="font-bold text-red-600">{contract.data.cpf || '-'}</span>
+                    <span className="font-bold text-[#0000FF]">{contract.data.cpf || '-'}</span>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">RG</span>
@@ -573,18 +573,17 @@ export const DriverSignature: React.FC = () => {
                   </div>
                   <div className="md:col-span-3">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Vínculo</span>
-                    <span className="font-bold text-slate-700">{contract.data.vinculo || 'FROTA'}</span>
+                    <span className="font-bold text-[#0000FF]">{contract.data.vinculo || 'FROTA'}</span>
                   </div>
                   {contract.data.operacao_especial && (
-                    <div className="md:col-span-3">
-                      <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider block">Operação Especial</span>
-                      <span className="font-bold text-red-600">{contract.data.operacao_especial}</span>
+                    <div className="md:col-span-3 border-t border-black pt-2 text-right">
+                      <span className="font-bold text-[#A020F0] text-lg">{contract.data.operacao_especial.toUpperCase()}</span>
                     </div>
                   )}
                 </div>
 
                 <div className="bg-slate-50 p-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-y border-slate-100">Dados do Veículo</div>
-                <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm border-x border-b border-black">
                   <div className="md:col-span-2">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Transportadora</span>
                     <span className="font-bold text-slate-700">{contract.data.transportador || '-'}</span>
@@ -605,22 +604,13 @@ export const DriverSignature: React.FC = () => {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Placa Carreta 2</span>
                     <span className="font-bold text-slate-700">{contract.data.carreta2 || '-'}</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tipo de Carreta</span>
-                    <span className={`font-bold ${(contract.data.modelo_carreta || contract.data.tipo_carreta || '').toUpperCase().includes('RODOTREM BAÚ') ? 'text-red-600' : 'text-slate-700'}`}>
-                      {(contract.data.modelo_carreta || contract.data.tipo_carreta || '-').toUpperCase()}
-                    </span>
+                  <div className="md:col-span-3 bg-[#C2EABD] p-2 flex items-center justify-between">
+                    <span className="font-bold text-slate-700">Trajeto: {contract.data.origem || 'SANTA LUZIA|MG'} <span className="font-bold text-black px-2">X</span> {contract.data.destino || 'GOV. CELSO RAMOS'}</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tipo de Cavalo</span>
-                    <span className={`font-bold ${(contract.data.modelo_cavalo || contract.data.tipo_cavalo || '').toUpperCase().includes('TRUCADO') ? 'text-red-600' : 'text-slate-700'}`}>
-                      {(contract.data.modelo_cavalo || contract.data.tipo_cavalo || '-').toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
+                  <div className="md:col-span-3">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tecnologia</span>
-                    <span className={`font-bold ${(contract.data.tecnologia || '').toUpperCase().includes('SASCAR') ? 'text-red-600' : 'text-slate-700'}`}>
-                      {contract.data.tecnologia || '-'}
+                    <span className={`font-bold ${contract.data.tecnologia?.toUpperCase().includes("SASCAR") ? 'text-[#FF0000]' : 'text-slate-700'}`}>
+                      {contract.data.tecnologia?.toUpperCase() || '-'}
                     </span>
                   </div>
                 </div>
