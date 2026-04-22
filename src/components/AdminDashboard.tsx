@@ -458,60 +458,53 @@ ${operacaoEspecial ? `\n\nOPERAÇÃO ESPECIAL: ${operacaoEspecial}` : ''}
 
     doc.setFont("helvetica", "bold");
     doc.text("Data:", col1, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.text(new Date(contract.created_at).toLocaleDateString('pt-BR'), col1 + 10, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("CPF:", col2, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.setTextColor(0, 0, 255); // Blue for CPF
     doc.text(contract.data.cpf || '-', col2 + 10, y);
     doc.setTextColor(0, 0, 0);
 
     doc.setFont("helvetica", "bold");
     doc.text("Transportadora:", col3, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.text(String(contract.data.transportador || '-').substring(0, 25), col3 + 25, y);
 
     y += 5;
     doc.setFont("helvetica", "bold");
     doc.text("Motorista:", col1, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.text(String(contract.data.motorista || '-').substring(0, 38), col1 + 16, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("Vínculo:", col2, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.vinculo || '-', col2 + 14, y);
 
     y += 5;
     doc.setFont("helvetica", "bold");
     doc.text("Placa Cavalo:", col1, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.cavalo || '-', col1 + 22, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("Carreta I:", col2, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.carreta || '-', col2 + 16, y);
 
     doc.setFont("helvetica", "bold");
     doc.text("Carreta II:", col3, y);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "normal");
     doc.text(contract.data.carreta2 || '-', col3 + 16, y);
 
-    y += 5;
-    doc.setFont("helvetica", "bold");
-    doc.text("Vínculo:", col1, y);
-    doc.setFont("helvetica", "bold");
-    doc.text(contract.data.vinculo || '-', col1 + 16, y);
-
     if (contract.data.operacao_especial) {
+      y += 5;
       doc.setFont("helvetica", "bold");
       doc.setTextColor(227, 38, 54); // Red to highlight
-      doc.text("OPERAÇÃO ESPECIAL:", col2, y);
-      doc.setFont("helvetica", "bold");
-      doc.text(contract.data.operacao_especial, col2 + 35, y);
+      doc.text(contract.data.operacao_especial.toUpperCase(), col1, y);
       doc.setTextColor(0, 0, 0);
     }
 
