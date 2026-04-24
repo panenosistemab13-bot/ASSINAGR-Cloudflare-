@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, orderBy, where } from 'firebase/firestore';
 import { Contract } from '../types';
 
 const firebaseConfig = {
@@ -19,17 +19,17 @@ const db = getFirestore(app, FIRESTORE_DATABASE_ID);
 
 export const api = {
   contracts: {
-    list: async (): Promise<Contract[]> => {
-      const q = query(collection(db, 'termos'), orderBy('created_at', 'desc'));
+    list: async (username: string): Promise<Contract[]> => {
+      const q = query(collection(db, 'termos'), where('tenant_id', '==', username), orderBy('created_at', 'desc'));
       const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id
       } as Contract));
     },
-    create: async (contractData: any): Promise<void> => {
+    create: async (contractData: any, username: string): Promise<void> => {
       const dbRef = doc(db, 'termos', contractData.id);
-      await setDoc(dbRef, contractData);
+      await setDoc(dbRef, { ...contractData, tenant_id: username });
     },
     get: async (id: string): Promise<Contract> => {
       const dbRef = doc(db, 'termos', id);
@@ -61,6 +61,7 @@ export const api = {
       await deleteDoc(dbRef);
     }
   },
+// ... (rest of the file stays the same)
   settings: {
     getTerms: async (): Promise<any> => {
       const dbRef = doc(db, 'settings', 'termos');

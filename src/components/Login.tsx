@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import { LOGO_3_CORACOES } from '../constants';
 
-export const Login = ({ onLogin }: { onLogin: () => void }) => {
+export const Login = ({ onLogin }: { onLogin: (username: string) => void }) => {
   const [username, setUsername] = useState('assinagr3c');
   const [password, setPassword] = useState('agentesderisco3c');
   const [error, setError] = useState('');
@@ -15,7 +15,7 @@ export const Login = ({ onLogin }: { onLogin: () => void }) => {
     
     setTimeout(() => {
       if (username === 'assinagr3c' && password === 'agentesderisco3c') {
-        onLogin();
+        onLogin(username);
       } else {
         setError('Acesso negado');
         setIsLoading(false);

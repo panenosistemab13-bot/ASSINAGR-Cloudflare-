@@ -43,6 +43,7 @@ export interface DriverData {
   paradas_proibidas?: string;
   termo_personalizado?: string;
   rota?: string;
+  operacao_especial?: string;
 }
 
 export interface Contract {

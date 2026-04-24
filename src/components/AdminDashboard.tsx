@@ -146,7 +146,7 @@ export const MAPA_REFERENCIA = {
   "SANTA LUZIA": "SANTA LUZIA.png"
 };
 
-export const AdminDashboard: React.FC = () => {
+export const AdminDashboard: React.FC<{ username: string }> = ({ username }) => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [parsedData, setParsedData] = useState<DriverData | null>(null);
@@ -196,7 +196,7 @@ export const AdminDashboard: React.FC = () => {
   const fetchHistory = async () => {
     setHistoryLoading(true);
     try {
-      const data = await api.contracts.list();
+      const data = await api.contracts.list(username);
       setContracts(data);
     } catch (error) {
       console.log("Erro ao acessar API Worker, não foi possível carregar o histórico.", error);
@@ -338,7 +338,7 @@ ${operacaoEspecial ? `\n\nOPERAÇÃO ESPECIAL: ${operacaoEspecial}` : ''}
 
       // 1. SALVAR NO FIRESTORE
       try {
-        await api.contracts.create(contractData);
+        await api.contracts.create(contractData, username);
       } catch (error) {
         console.error("Erro ao salvar no Firestore:", error);
         alert("Erro ao salvar os dados no banco. O link pode não funcionar.");

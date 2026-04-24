@@ -143,7 +143,7 @@ const VisualizadorDeMapa: React.FC<VisualizadorDeMapaProps> = ({
         </h3>
       </div>
 
-      <div className="flex flex-col border-b-2 border-slate-800 h-[450px]">
+      <div className="flex flex-col border-b-2 border-slate-800 h-auto md:h-[450px]">
         {/* Área do Mapa (Esquerda) */}
         <div className="w-full h-full bg-slate-50 relative overflow-hidden flex flex-col md:flex-row">
           <div className="flex-1 relative min-h-[300px] md:min-h-0 border-b-2 md:border-b-0 md:border-r-2 border-slate-800 bg-white">

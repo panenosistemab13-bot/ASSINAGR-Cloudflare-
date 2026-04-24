@@ -7,8 +7,10 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = (user: string) => {
+    setUsername(user);
     setIsAuthenticated(true);
   };
 
@@ -18,7 +20,7 @@ export default function App() {
         <Routes>
           <Route 
             path="/" 
-            element={isAuthenticated ? <AdminDashboard /> : <Login onLogin={handleLogin} />} 
+            element={isAuthenticated ? <AdminDashboard username={username} /> : <Login onLogin={handleLogin} />} 
           />
           <Route path="/sign/:id" element={<DriverSignature />} />
         </Routes>
