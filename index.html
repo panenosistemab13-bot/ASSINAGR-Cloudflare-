@@ -1,38 +1,40 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="pt-BR" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="google" content="notranslate">
+    
     <title>AssinaGR</title>
-    <link rel="icon" type="image/jpeg" href="https://i.postimg.cc/d1d5Lg7W/cafe.jpg" />
-  </head>
-  <body>
-    <script>
-      // 1. ESCUDO CONTRA O ERRO 'REMOVECHILD'
-      // Esse bloco impede que o erro de "Node" trave a tela preta no celular
-      window.addEventListener('error', function(e) {
-        const errorsToIgnore = ['removeChild', 'Node', 'insertBefore', 'HierarchyRequestError'];
-        if (errorsToIgnore.some(msg => e.message?.includes(msg))) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-          console.warn("IA Studio Fix: Erro de renderização ignorado para evitar travamento.");
-        }
-      }, true);
 
-      // 2. CORREÇÃO PARA TRADUTORES DE CELULAR
-      // Impede que o Google Tradutor quebre o DOM do app, que causa o erro da imagem
-      if (typeof Node !== 'undefined' && Node.prototype) {
-        const originalRemoveChild = Node.prototype.removeChild;
-        Node.prototype.removeChild = function(child) {
-          if (child.parentNode !== this) {
-            return child; // Ignora a remoção se o nó não for filho (evita o crash)
-          }
-          return originalRemoveChild.apply(this, arguments);
-        };
-      }
+    <script>
+        // 1. ESCUDO CONTRA O ERRO 'REMOVECHILD' E CRASH NO MOBILE
+        window.addEventListener('error', function(e) {
+            const errorsToIgnore = ['removeChild', 'Node', 'insertBefore', 'HierarchyRequestError'];
+            if (errorsToIgnore.some(msg => e.message?.includes(msg))) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                console.warn("Correção: Erro de renderização ignorado.");
+            }
+        }, true);
+
+        // 2. PROTEÇÃO ADICIONAL DO DOM (IMPEDE QUE O NAVEGADOR QUEBRE O APP)
+        if (typeof Node !== 'undefined' && Node.prototype) {
+            const originalRemoveChild = Node.prototype.removeChild;
+            Node.prototype.removeChild = function(child) {
+                if (child.parentNode !== this) {
+                    return child; 
+                }
+                return originalRemoveChild.apply(this, arguments);
+            };
+        }
     </script>
+</head>
+<body class="notranslate">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
 
+    <noscript>Você precisa de JavaScript para rodar este app.</noscript>
+</body>
+</html>
