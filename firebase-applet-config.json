@@ -1,10 +1,10 @@
 {
   "projectId": "assinar-gr-marrom",
   "appId": "1:837699338523:web:7033afa2436080aee493be",
-  "apiKey": "AIzaSyBF2Y90M7rZZD27aCpItz8jNXj8aN2F-YM",
+  "apiKey": "AIzaSyBF2XQ9M7z77D27pCnLtz8jNYj8aN2F-YM",
   "authDomain": "assinar-gr-marrom.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-9ac73417-ac97-48d4-ad28-862316ff223e",
-  "storageBucket": "assinar-gr-marrom.firebasestorage.app",
+  "storageBucket": "assinar-gr-marrom.appspot.com",
   "messagingSenderId": "837699338523",
   "measurementId": ""
 }
