@@ -19,12 +19,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({ onSave, onClear, sav
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#000000'; // Preto vivo
-    ctx.shadowBlur = 1;
-    ctx.shadowColor = '#000000';
+    ctx.strokeStyle = '#000';
 
     const resizeCanvas = () => {
       const rect = canvas.parentElement?.getBoundingClientRect();
@@ -36,12 +33,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({ onSave, onClear, sav
         // Redraw settings after resize
         const newCtx = canvas.getContext('2d');
         if (newCtx) {
-          newCtx.lineWidth = 3;
+          newCtx.lineWidth = 2;
           newCtx.lineCap = 'round';
-          newCtx.lineJoin = 'round';
-          newCtx.strokeStyle = '#000000'; // Preto vivo
-          newCtx.shadowBlur = 1;
-          newCtx.shadowColor = '#000000';
+          newCtx.strokeStyle = '#000';
         }
       }
     };

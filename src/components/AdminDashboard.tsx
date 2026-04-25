@@ -152,7 +152,7 @@ export const AdminDashboard: React.FC<{ username: string }> = ({ username }) => 
   const [parsedData, setParsedData] = useState<DriverData | null>(null);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'generate' | 'history' | 'idealizador' | 'reciclagem'>('generate');
+  const [activeTab, setActiveTab] = useState<'generate' | 'history' | 'idealizador' | 'reciclagem'>('generate');
   const [operacaoEspecial, setOperacaoEspecial] = useState('');
 
   const OPERACOES_ESPECIAIS = [
@@ -618,8 +618,7 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     doc.setFont("helvetica", "normal");
 
     // Footer & Signature
-    y = 250; // Force signature down
-    
+    y += 8;
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     
@@ -633,20 +632,30 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
       ? new Date(contract.signed_at).toLocaleString('pt-BR') 
       : new Date().toLocaleString('pt-BR');
     
-    // Removed location and RG from immediate signature block if moving everything down
+    doc.text(`Santa Luzia, ${currentDateStr}`, pageWidth / 2, y, { align: 'center' });
     
-    doc.line(55, y, 155, y); // Line length 100
+    y += 15;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.text(contract.data.rg || '-', pageWidth / 2, y - 1, { align: 'center' });
+    doc.line(60, y, 150, y);
     y += 4;
-    doc.text("(Assinatura do Motorista)", pageWidth / 2, y, { align: 'center' });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.text("(RG do motorista)", pageWidth / 2, y, { align: 'center' });
     
+    y += 15;
     if (contract.signature) {
       try {
-        // Compact and centered signature placed above the line
-        doc.addImage(contract.signature, 'PNG', pageWidth / 2 - 20, y - 15, 40, 10);
+        // Compact and centered signature
+        doc.addImage(contract.signature, 'PNG', pageWidth / 2 - 20, y - 10.5, 40, 10);
       } catch (e) {
         console.error("Failed to add signature to PDF", e);
       }
     }
+    doc.line(60, y, 150, y);
+    y += 4;
+    doc.text("(Assinatura do Motorista)", pageWidth / 2, y, { align: 'center' });
     
     y += 10;
     
@@ -1362,10 +1371,10 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-8">
             <div>
               <h2 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-                {activeTab === 'dashboard' ? 'Painel de Controle' : activeTab === 'generate' ? 'Importar Dados' : activeTab === 'reciclagem' ? 'Reciclagem' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
+                {activeTab === 'generate' ? 'Importar Dados' : activeTab === 'reciclagem' ? 'Reciclagem' : activeTab === 'idealizador' ? 'Idealizador' : 'Histórico de Termos'}
               </h2>
               <p className="text-slate-500 text-xs lg:text-sm mt-1">
-                {activeTab === 'dashboard' ? 'Visão geral das assinaturas e operações.' : activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'reciclagem' ? 'Frases e advertências para reciclagem de motoristas.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
+                {activeTab === 'generate' ? 'Processe os dados da planilha para criar um link de assinatura.' : activeTab === 'reciclagem' ? 'Frases e advertências para reciclagem de motoristas.' : activeTab === 'idealizador' ? 'Sobre a criação do aplicativo e nossa visão.' : 'Acompanhe e gerencie todos os termos emitidos.'}
               </p>
             </div>
             
