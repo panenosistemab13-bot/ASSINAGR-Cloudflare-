@@ -22,9 +22,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({ onSave, onClear, sav
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#0000FF'; // Azul vivo
+    ctx.strokeStyle = '#000000'; // Preto vivo
     ctx.shadowBlur = 1;
-    ctx.shadowColor = '#0000FF';
+    ctx.shadowColor = '#000000';
 
     const resizeCanvas = () => {
       const rect = canvas.parentElement?.getBoundingClientRect();
@@ -39,9 +39,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({ onSave, onClear, sav
           newCtx.lineWidth = 3;
           newCtx.lineCap = 'round';
           newCtx.lineJoin = 'round';
-          newCtx.strokeStyle = '#0000FF'; // Azul vivo
+          newCtx.strokeStyle = '#000000'; // Preto vivo
           newCtx.shadowBlur = 1;
-          newCtx.shadowColor = '#0000FF';
+          newCtx.shadowColor = '#000000';
         }
       }
     };
