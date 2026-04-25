@@ -1328,11 +1328,11 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
                 Histórico de Termos
               </button>
               <button 
-                onClick={() => setActiveTab('dashboard')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'dashboard' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                onClick={() => setActiveTab('reciclagem')}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'reciclagem' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
               >
-                <LayoutDashboard className="w-5 h-5" />
-                Painel de Controle
+                <AlertCircle className="w-5 h-5" />
+                Reciclagem
               </button>
               <button 
                 onClick={() => setActiveTab('idealizador')}
@@ -1340,13 +1340,6 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
               >
                 <Info className="w-5 h-5" />
                 Idealizador
-              </button>
-              <button 
-                onClick={() => setActiveTab('reciclagem')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === 'reciclagem' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
-              >
-                <AlertCircle className="w-5 h-5" />
-                Reciclagem
               </button>
             </nav>
 
