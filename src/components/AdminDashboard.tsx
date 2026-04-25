@@ -618,7 +618,8 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
     doc.setFont("helvetica", "normal");
 
     // Footer & Signature
-    y += 8;
+    y = 250; // Force signature down
+    
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     
@@ -632,30 +633,20 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
       ? new Date(contract.signed_at).toLocaleString('pt-BR') 
       : new Date().toLocaleString('pt-BR');
     
-    doc.text(`Santa Luzia, ${currentDateStr}`, pageWidth / 2, y, { align: 'center' });
+    // Removed location and RG from immediate signature block if moving everything down
     
-    y += 15;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.text(contract.data.rg || '-', pageWidth / 2, y - 1, { align: 'center' });
-    doc.line(60, y, 150, y);
+    doc.line(55, y, 155, y); // Line length 100
     y += 4;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7);
-    doc.text("(RG do motorista)", pageWidth / 2, y, { align: 'center' });
+    doc.text("(Assinatura do Motorista)", pageWidth / 2, y, { align: 'center' });
     
-    y += 15;
     if (contract.signature) {
       try {
-        // Compact and centered signature
-        doc.addImage(contract.signature, 'PNG', pageWidth / 2 - 20, y - 10.5, 40, 10);
+        // Compact and centered signature placed above the line
+        doc.addImage(contract.signature, 'PNG', pageWidth / 2 - 20, y - 15, 40, 10);
       } catch (e) {
         console.error("Failed to add signature to PDF", e);
       }
     }
-    doc.line(60, y, 150, y);
-    y += 4;
-    doc.text("(Assinatura do Motorista)", pageWidth / 2, y, { align: 'center' });
     
     y += 10;
     
