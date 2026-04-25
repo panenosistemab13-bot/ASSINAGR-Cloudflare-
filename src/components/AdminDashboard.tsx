@@ -149,7 +149,6 @@ export const MAPA_REFERENCIA = {
 export const AdminDashboard: React.FC<{ username: string }> = ({ username }) => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [termoGerado, setTermoGerado] = useState(""); // Adicionado
   const [parsedData, setParsedData] = useState<DriverData | null>(null);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -297,7 +296,6 @@ ${operacaoEspecial ? `\n\nOPERAÇÃO ESPECIAL: ${operacaoEspecial}` : ''}
         .replace('{placa}', parsedInfo.cavalo || 'ABC-0000')
         .replace('{data}', parsedInfo.data || new Date().toLocaleDateString('pt-BR'));
 
-      setTermoGerado(termoGerado); // Adicionado
       console.log("Termo Gerado com Sucesso:", termoGerado);
 
       // Gerar um ID único para o documento do Firestore
@@ -1210,74 +1208,68 @@ Pernoite na BR-381 Rod. Fernão Dias, somente autorizado nos postos Rede Graal e
 
   const downloadPDF = async (originalContract: Contract) => {
     setLoading(true);
+    let contract = originalContract;
+    
     try {
-      let contract = originalContract;
-      
-      try {
-        // Busca dados mais recentes do Firestore para garantir que a assinatura e status estejam ok
-        const latestContract = await api.contracts.get(originalContract.id);
-        if (latestContract) {
-          contract = latestContract;
-        }
-      } catch (e) {
-        console.warn("Usando dados do cache para PDF pois falhou busca remota", e);
+      // Busca dados mais recentes do Firestore para garantir que a assinatura e status estejam ok
+      const latestContract = await api.contracts.get(originalContract.id);
+      if (latestContract) {
+        contract = latestContract;
       }
-
-      const doc = new jsPDF();
-      
-      const transportadora = (contract.data.transportador || '').toUpperCase();
-      
-      const checklistOnlyTransportadoras = [
-        'TOMASI',
-        'TRANSMAGNA',
-        'GOBOR',
-        'APK',
-        'GT MINAS',
-        'UNITRADING LOG',
-        'MODERN LOGISTICS',
-        'RGS TRANSPORTES',
-        'JRL TRANSPORTES',
-        'JRL TRANSPORTES.'
-      ];
-
-      const allThreeTransportadoras = [
-        'SRH SARAIVA',
-        'MOEDENSE',
-        'RNCGG',
-        'FASI',
-        'TRANSPORTES VIVAN',
-        'COMBOIO',
-        'LEDIFRAN',
-        'TORNADO'
-      ];
-
-      const isChecklistOnly = checklistOnlyTransportadoras.some(t => transportadora.includes(t));
-      const isAllThree = allThreeTransportadoras.some(t => transportadora.includes(t));
-
-      if (isChecklistOnly && !isAllThree) {
-        // Only Checklist
-        generateChecklistContent(doc, contract);
-      } else {
-        // All three documents (default behavior or explicitly requested)
-        // Page 1: Termo de Responsabilidade (Via Única)
-        generateTermContent(doc, contract, 15, "VIA ÚNICA / ARQUIVO");
-
-        // Page 2: Plano de Rota
-        doc.addPage();
-        await generatePlanoDeTrajetoContent(doc, contract);
-
-        // Page 3: Checklist
-        doc.addPage();
-        generateChecklistContent(doc, contract);
-      }
-
-      doc.save(`documentos_gr_${contract.data.motorista || contract.id}.pdf`);
     } catch (e) {
-      console.error("Erro ao gerar PDF:", e);
-      alert("Erro ao gerar PDF. Tente novamente.");
-    } finally {
-      setLoading(false);
+      console.warn("Usando dados do cache para PDF pois falhou busca remota", e);
     }
+
+    const doc = new jsPDF();
+    
+    const transportadora = (contract.data.transportador || '').toUpperCase();
+    
+    const checklistOnlyTransportadoras = [
+      'TOMASI',
+      'TRANSMAGNA',
+      'GOBOR',
+      'APK',
+      'GT MINAS',
+      'UNITRADING LOG',
+      'MODERN LOGISTICS',
+      'RGS TRANSPORTES',
+      'JRL TRANSPORTES',
+      'JRL TRANSPORTES.'
+    ];
+
+    const allThreeTransportadoras = [
+      'SRH SARAIVA',
+      'MOEDENSE',
+      'RNCGG',
+      'FASI',
+      'TRANSPORTES VIVAN',
+      'COMBOIO',
+      'LEDIFRAN',
+      'TORNADO'
+    ];
+
+    const isChecklistOnly = checklistOnlyTransportadoras.some(t => transportadora.includes(t));
+    const isAllThree = allThreeTransportadoras.some(t => transportadora.includes(t));
+
+    if (isChecklistOnly && !isAllThree) {
+      // Only Checklist
+      generateChecklistContent(doc, contract);
+    } else {
+      // All three documents (default behavior or explicitly requested)
+      // Page 1: Termo de Responsabilidade (Via Única)
+      generateTermContent(doc, contract, 15, "VIA ÚNICA / ARQUIVO");
+
+      // Page 2: Plano de Rota
+      doc.addPage();
+      await generatePlanoDeTrajetoContent(doc, contract);
+
+      // Page 3: Checklist
+      doc.addPage();
+      generateChecklistContent(doc, contract);
+    }
+
+    doc.save(`documentos_gr_${contract.data.motorista || contract.id}.pdf`);
+    setLoading(false);
   };
 
   const stats = [
